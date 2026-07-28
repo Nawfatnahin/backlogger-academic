@@ -14,6 +14,15 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.3",
+    date: "2026-07-28",
+    summary: "Typography Scale Optimization & Header Cleanup",
+    changes: [
+      { type: "IMPROVED", description: "Expanded typography scale across the entire Admin Panel for enhanced legibility" },
+      { type: "REMOVED", description: "Cleaned up top header bar by removing the redundant Online badge indicator" },
+    ],
+  },
+  {
     version: "1.4.2",
     date: "2026-07-28",
     summary: "Spotlight Refraction & High-Agency Bento Cards",

@@ -2,6 +2,16 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.3] — 2026-07-28
+
+### Improved
+- **Typography Scale**: Expanded font sizes and font weights across the Admin Panel for clearer readability.
+
+### Removed
+- **Top Header Status Badge**: Removed the redundant Online badge indicator from the top header bar.
+
+---
+
 ## [1.4.2] — 2026-07-28
 
 ### Improved
