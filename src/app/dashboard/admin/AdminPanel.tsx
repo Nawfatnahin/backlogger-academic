@@ -1,181 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { 
-  ShieldCheck, 
-  Mail, 
-  Plus, 
-  Crown, 
-  ArrowLeft,
-  Users,
-  Search,
-  Trash2,
-  Monitor,
-  Database,
-  Zap,
-  Cpu,
-  Globe,
-  Radar,
-  ArrowRight,
-  Settings,
-  Sparkles,
-  Activity as ActivityIcon,
-  Key,
-  RefreshCw,
-  Copy,
-  Clock,
-  CheckCircle2,
-  Lock,
-  Unlock,
-  ListChecks,
-  UserCheck
+  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck
 } from "lucide-react";
 import { toggleProStatus, deleteSubscription, generateAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList } from "./actions";
 import { toast } from "sonner";
 import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { getJarvisMessage } from "./jarvis-utils";
-import Interactive3DBox from "./Interactive3DBox";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-const C = {
-  bg:         "var(--bg-base)",
-  card:       "var(--bg-surface)",
-  panel:      "var(--bg-elevated)",
-  panelAlt:   "var(--panel-alt)",
-  border:     "var(--border-default)",
-  borderBright:"var(--border-default)",
-  accent:     "var(--accent-color)",
-  accentSoft: "var(--accent-soft)",
-  accentDeep: "var(--accent-deep)",
-  accentGlow: "var(--accent-glow)",
-  accentLine: "var(--accent-line)",
-  text:       "var(--text-primary)",
-  textSub:    "var(--text-secondary)",
-  textDim:    "var(--text-tertiary)",
-  success:    "#10b981",
-  successDim: "rgba(16, 185, 129, 0.15)",
-  warning:    "#f59e0b",
-  warningDim: "rgba(245, 158, 11, 0.15)",
-  danger:     "#ef4444",
-  dangerDim:  "rgba(239, 68, 68, 0.15)",
-  blue:       "#0ea5e9",
-  blueDim:    "rgba(14, 165, 233, 0.15)",
-};
-
-interface NeuralLog {
-  id: number;
-  time: string;
-  msg: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-}
-
-function now() {
-  const d = new Date();
-  return [d.getHours(), d.getMinutes(), d.getSeconds()]
-    .map(n => String(n).padStart(2, "0")).join(":");
-}
-
-function MetricRing({ value, max, color, label, unit, size = 96 }: { value: number; max: number; color: string; label: string; unit: string; size?: number }) {
-  const sw = 5.5;
-  const r  = (size - sw) / 2;
-  const ci = 2 * Math.PI * r;
-  const dash = Math.min((value / max) * ci, ci);
-
-  return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6 }}>
-      <div style={{ position:"relative", width:size, height:size }}>
-        <svg width={size} height={size} style={{ transform:"rotate(-90deg)" }} aria-hidden>
-          <circle cx={size/2} cy={size/2} r={r}
-            fill="none" stroke={C.border} strokeWidth={sw} />
-          <circle cx={size/2} cy={size/2} r={r}
-            fill="none" stroke={color} strokeWidth={sw}
-            strokeDasharray={`${dash} ${ci}`}
-            strokeLinecap="round"
-            style={{ transition:"stroke-dasharray 0.7s cubic-bezier(.4,0,.2,1)" }} />
-        </svg>
-        <div style={{
-          position:"absolute", inset:0,
-          display:"flex", flexDirection:"column",
-          alignItems:"center", justifyContent:"center",
-          gap:1,
-        }}>
-          <span style={{ fontSize:17, fontWeight:600, color, lineHeight:1, fontFamily:"'Space Grotesk', system-ui, sans-serif" }}>
-            {value}
-          </span>
-          <span style={{ fontSize:9, color:C.textDim, letterSpacing:"0.06em", fontFamily:"'Space Grotesk', system-ui, sans-serif", fontWeight:500 }}>
-            {unit}
-          </span>
-        </div>
-      </div>
-      <span style={{ fontSize:10, color:C.textSub, letterSpacing:"0.12em", fontFamily:"'Space Grotesk', system-ui, sans-serif", fontWeight:500 }}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function StatusPill({ label, ok, type = 'emerald' }: { label: string; ok: boolean; type?: 'emerald' | 'teal' | 'danger' }) {
-  let bg = ok ? C.successDim : C.dangerDim;
-  let border = ok ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)";
-  let color = ok ? C.success : C.danger;
-
-  if (ok) {
-    if (type === 'teal') {
-      bg = "rgba(13,148,136,0.15)";
-      border = "rgba(13,148,136,0.3)";
-      color = "#0d9488";
-    } else if (type === 'emerald') {
-      bg = "rgba(16,185,129,0.15)";
-      border = "rgba(16,185,129,0.3)";
-      color = "#10b981";
-    }
-  }
-
-  return (
-    <span style={{
-      display:"inline-flex", alignItems:"center", gap:6,
-      padding:"4px 10px",
-      background: bg,
-      border: `1px solid ${border}`,
-      borderRadius:6,
-      fontSize:10,
-      fontWeight:600,
-      color: color,
-      letterSpacing:"0.06em",
-      fontFamily:"'Space Grotesk', system-ui, sans-serif",
-    }}>
-      <span style={{
-        width:6, height:6, borderRadius:"50%",
-        background: color,
-        display:"inline-block",
-        boxShadow: `0 0 8px ${color}`,
-        animation:"blink 2s infinite",
-      }} />
-      {label}
-    </span>
-  );
-}
-
-function MiniBar({ value, max, color }: { value: number; max: number; color: string }) {
-  return (
-    <div className="bg-[#E5E7EB] dark:bg-[#2A2A2A]" style={{
-      height:4, borderRadius:4,
-      overflow:"hidden",
-    }}>
-      <div style={{
-        height:"100%",
-        width:`${Math.min(100,(value/max)*100)}%`,
-        background:color,
-        borderRadius:4,
-        transition:"width 0.6s ease",
-      }} />
-    </div>
-  );
 }
 
 interface Subscription {
@@ -225,16 +61,10 @@ export default function AdminPanel({
   const [subscriptions, setSubscriptions] = useState(initialSubscriptions || []);
   const [newEmail, setNewEmail] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-  const [adminName] = useState(ownerEmail.split('@')[0]);
-  const [isEditingName, setIsEditingName] = useState(false);
   const [registrySearch, setRegistrySearch] = useState("");
   const [waitlistSearch, setWaitlistSearch] = useState("");
   const [proSearch, setProSearch] = useState("");
   const [mounted, setMounted] = useState(false);
-  const [jarvisMessage, setJarvisMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(true);
-  const [neuralLogs, setNeuralLogs] = useState<NeuralLog[]>([]);
-  const logRef = useRef<HTMLDivElement>(null);
 
   // Code Generator State
   const [codeInfo, setCodeInfo] = useState<ActiveCodeInfo | null>(initialCodeInfo);
@@ -245,20 +75,12 @@ export default function AdminPanel({
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>(initialWaitlist || []);
   const [proAccessUsers, setProAccessUsers] = useState<ProAccessUser[]>(initialProAccessList || []);
 
-  // Dynamic calculations
   const totalGmails = (subscriptions || []).length;
   const isActuallyPro = (s: Subscription) => s.plan === 'pro' && (!s.premium_until || new Date(s.premium_until) > new Date());
   const premiumCount = (subscriptions || []).filter(isActuallyPro).length;
 
-  // Simulated real-time metrics for Buddy OS
-  const [metrics, setMetrics] = useState({
-    cpu: 12,
-    ram: 45,
-    latency: 24,
-    uptime: "99.998%"
-  });
-
   useEffect(() => {
+    setMounted(true);
     document.documentElement.classList.add('admin-theme');
     document.body.classList.add('admin-theme');
     return () => {
@@ -267,63 +89,6 @@ export default function AdminPanel({
     };
   }, []);
 
-  useEffect(() => {
-    setMounted(true);
-    
-    let activityLevel: 'high' | 'idle' | 'normal' = 'normal';
-    if (totalGmails > 100) activityLevel = 'high';
-    else if (totalGmails < 10) activityLevel = 'idle';
-    
-    const message = getJarvisMessage(activityLevel);
-    setJarvisMessage(message);
-
-    setNeuralLogs([
-      { id: 1, time: now(), msg: "Neural sync established.", type: "info" },
-      { id: 2, time: now(), msg: "Matrix population: " + totalGmails + " nodes.", type: "success" },
-      { id: 3, time: now(), msg: "Security protocol: Active.", type: "success" }
-    ]);
-
-    setIsTyping(true);
-    const timer = setTimeout(() => setIsTyping(false), 2000);
-
-    const metricInterval = setInterval(() => {
-      const newCpu = Math.floor(Math.random() * 15) + 5;
-      const newRam = Math.floor(Math.random() * 10) + 40;
-      setMetrics(prev => ({
-        cpu: newCpu,
-        ram: newRam,
-        latency: Math.floor(Math.random() * 10) + 15,
-        uptime: "99.99" + (Math.floor(Math.random() * 9) + 1) + "%"
-      }));
-
-      const logsList: { msg: string; type: 'info' | 'success' | 'warning' | 'error' }[] = [
-        { msg: `CPU throughput: ${newCpu}%`, type: newCpu > 12 ? 'warning' : 'info' },
-        { msg: `Memory allocation shifted to ${newRam}%`, type: 'info' },
-        { msg: "Packet integrity verified.", type: "success" },
-        { msg: "Neural sync pulse: Nominal.", type: "success" },
-        { msg: "Sub-node status: Synchronized.", type: "success" },
-        { msg: "Security scan: No threats.", type: "success" }
-      ];
-      const randomLog = logsList[Math.floor(Math.random() * logsList.length)];
-      setNeuralLogs(prev => [
-        { id: Math.random(), time: now(), ...randomLog },
-        ...prev.slice(0, 15)
-      ]);
-    }, 3000);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(metricInterval);
-    };
-  }, [totalGmails]);
-
-  useEffect(() => {
-    if (logRef.current) {
-      logRef.current.scrollTop = logRef.current.scrollHeight;
-    }
-  }, [neuralLogs]);
-  
-  // Filtering
   const filteredSubscriptions = subscriptions
     .filter(s => s.email !== ownerEmail)
     .filter(s => s.email.toLowerCase().includes(registrySearch.toLowerCase()))
@@ -334,15 +99,6 @@ export default function AdminPanel({
     
   const filteredProAccess = proAccessUsers
     .filter(u => u.email.toLowerCase().includes(proSearch.toLowerCase()));
-
-  // Recent Logins
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-  
-  const recentLogins = [...(subscriptions || [])]
-    .filter(s => new Date(s.created_at) > threeDaysAgo)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 8);
 
   const handleTogglePro = async (email: string, currentPlan: string) => {
     const isPro = currentPlan === 'pro';
@@ -370,7 +126,7 @@ export default function AdminPanel({
       }
 
       setSubscriptions(subscriptions.map(s => s.email === email ? { ...s, plan: !isPro ? 'pro' : 'free', premium_until } : s));
-      toast.success(`${email} matrix updated.`);
+      toast.success(`${email} access updated.`);
     } catch {
       toast.error("Failed to update account.");
     }
@@ -475,951 +231,401 @@ export default function AdminPanel({
     return `${hours}h remaining`;
   };
 
-  if (!mounted) return null;
-
   return (
-    <div className="admin-theme min-h-screen overflow-x-hidden relative bg-bg text-ink font-body">
-      
-      {/* Subtle Background Decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px]" />
-         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px]" />
-      </div>
-
-      {/* Clean Sticky Header */}
-      <header className="bg-bg/95 backdrop-blur-xl border-b border-accent/10 py-3 sm:py-6 sticky top-0 z-50">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-8 flex justify-between items-center gap-4">
-          <div className="flex items-center gap-3 sm:gap-6">
-            <Link href="/dashboard" className="p-2.5 sm:p-3 rounded-2xl bg-accent text-text-primary hover:scale-105 shadow-lg shadow-accent/20 transition-all flex-shrink-0">
-              <ArrowLeft className="w-5 h-5 sm:w-6 h-6" />
+    <div className="admin-theme min-h-screen bg-bg text-text-primary font-sans selection:bg-accent/20 selection:text-accent pb-20">
+      <header className="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border-default/50">
+        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/dashboard" 
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+            >
+              <ArrowLeft className="w-4 h-4" />
             </Link>
-            <div className="flex items-center gap-4 sm:gap-8">
-              <h1 className="text-xl sm:text-2xl font-black text-accent tracking-tight hidden xs:block uppercase tracking-[0.1em]">Admin Panel</h1>
+            <div className="w-px h-6 bg-border-default/50" />
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-accent" />
+              <h1 className="text-base font-semibold tracking-tight">Admin Console</h1>
             </div>
           </div>
-          
-
-          <div className="flex items-center gap-3 sm:gap-6">
-             <div className="hidden xs:flex items-center px-4 py-1.5 rounded-full bg-accent/5 border border-accent/10">
-                <ShieldCheck className="w-3 h-3 text-accent mr-2" />
-                <span className="text-[10px] font-black text-accent uppercase tracking-widest">Admin Panel</span>
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center font-semibold text-sm">
+               {ownerEmail[0].toUpperCase()}
              </div>
-
-             <div className="flex items-center gap-3">
-                <div className="hidden md:flex flex-col items-end mr-2">
-                   <span className="text-[10px] font-black text-accent uppercase tracking-widest">Administrator</span>
-                   <button onClick={() => setIsEditingName(true)} className="text-sm font-bold text-ink hover:text-accent transition-colors flex items-center gap-2">
-                     {adminName}
-                     <Settings className="w-3.5 h-3.5 text-ink-4" />
-                   </button>
-                </div>
-                <div className="w-10 h-10 sm:w-12 h-12 rounded-2xl bg-bg-surface border border-border-strong flex items-center justify-center text-text-primary font-bold text-lg shadow-sm overflow-hidden relative group/avatar">
-                  {adminName[0].toUpperCase()}
-                  <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
-                </div>
-             </div>
+             <span className="text-sm font-medium hidden sm:block text-text-secondary">{ownerEmail}</span>
           </div>
         </div>
       </header>
 
-      <main className="p-8 lg:p-16 max-w-[1800px] mx-auto w-full space-y-20 relative z-10 font-body">
-        
-        {/* Stats Pedestals */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-max">
-           {/* Active Nodes */}
-           <Interactive3DBox className="group">
-              <div className="p-8 h-full glass-card rounded-[40px] text-text-primary">
-                 <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center group-hover:bg-accent/40 transition-all">
-                      <Users className="w-6 h-6 text-accent" />
-                    </div>
-                    <div className="text-[10px] font-bold text-text-secondary tracking-widest uppercase">Active Nodes</div>
-                 </div>
-                 <div className="space-y-1">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary">Network Population</h4>
-                    <p className="text-4xl font-sans font-bold text-text-primary tracking-tight">{totalGmails}</p>
-                 </div>
-                 <div className="mt-6 h-1 w-full bg-accent/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent w-3/4" />
-                 </div>
-              </div>
-           </Interactive3DBox>
-
-           {/* Admin Glorification Box */}
-           <Interactive3DBox className="group">
-              <div className="p-8 h-full glass-card rounded-[40px] text-text-primary">
-                 <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center group-hover:bg-accent/40 transition-all">
-                      <Crown className="w-6 h-6 text-accent" />
-                    </div>
-                    <div className="text-[10px] font-bold text-text-secondary tracking-widest uppercase">System Master</div>
-                 </div>
-                 <div className="space-y-1">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary">Supreme Commander</h4>
-                    <p className="text-2xl sm:text-3xl font-sans font-bold text-text-primary tracking-tight break-all">{ownerEmail}</p>
-                 </div>
-                 <div className="mt-6 h-1 w-full bg-accent/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent w-full" />
-                 </div>
-              </div>
-           </Interactive3DBox>
-
-           {/* Elite Sub-Nodes */}
-           <Interactive3DBox className="group">
-              <div className="p-8 h-full glass-card rounded-[40px] text-text-primary">
-                 <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center group-hover:bg-accent/40 transition-all">
-                      <Crown className="w-6 h-6 text-accent" />
-                    </div>
-                    <div className="text-[10px] font-bold text-text-secondary tracking-widest uppercase">Pro Access</div>
-                 </div>
-                 <div className="space-y-1">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary">Elite Sub-Nodes</h4>
-                    <p className="text-4xl font-sans font-bold text-text-primary tracking-tight">{premiumCount}</p>
-                 </div>
-                 <div className="mt-6 h-1 w-full bg-accent/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent w-3/4" />
-                 </div>
-              </div>
-           </Interactive3DBox>
+      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-12">
+        {/* Stats Row */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+             <div className="flex items-start justify-between mb-4">
+                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+                  <Users className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Active Nodes</span>
+             </div>
+             <div>
+                <p className="text-4xl font-bold tracking-tight">{totalGmails}</p>
+                <p className="text-sm text-text-secondary mt-1">Total registered users</p>
+             </div>
+          </div>
+          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+             <div className="flex items-start justify-between mb-4">
+                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">System Master</span>
+             </div>
+             <div>
+                <p className="text-2xl font-bold tracking-tight truncate" title={ownerEmail}>{ownerEmail}</p>
+                <p className="text-sm text-text-secondary mt-1">Primary administrator</p>
+             </div>
+          </div>
+          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+             <div className="flex items-start justify-between mb-4">
+                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Elite Nodes</span>
+             </div>
+             <div>
+                <p className="text-4xl font-bold tracking-tight">{premiumCount}</p>
+                <p className="text-sm text-text-secondary mt-1">Active Pro subscriptions</p>
+             </div>
+          </div>
         </section>
 
-        <div className="flex flex-col gap-12">
-           
-           {/* AI Assistant Card */}
-           <Interactive3DBox className="group w-full">
-              <div className="w-full glass-card text-text-primary transition-colors rounded-[40px] overflow-hidden relative shadow-sm h-full">
-                 {/* top accent line */}
-                 <div style={{
-                   position:"absolute", top:0, left:"10%", width:"80%", height:2,
-                   background:`linear-gradient(90deg,transparent,${C.accent},transparent)`,
-                   zIndex:2,
-                   opacity: 0.6
-                 }} />
-
-                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-                 {/* ── HEADER ── */}
-                 <div style={{
-                   display:"flex", alignItems:"center", justifyContent:"space-between",
-                   padding:"24px 32px",
-                   borderBottom:`1px solid ${C.border}`,
-                   background: "linear-gradient(180deg, var(--bg-elevated) 0%, transparent 100%)"
-                 }} className="flex-col sm:flex-row gap-4">
-                   <div style={{ display:"flex", alignItems:"center", gap:20 }}>
-                     {/* abstract logo/orb */}
-                     <div style={{
-                       width:48, height:48, borderRadius:"12px",
-                       background:`linear-gradient(135deg, ${C.accent}, ${C.accentSoft})`,
-                       boxShadow:`0 8px 16px ${C.accentGlow}`,
-                       display:"flex", alignItems:"center", justifyContent:"center",
-                       position:"relative",
-                       flexShrink:0,
-                       transform: "rotate(-10deg)"
-                     }}>
-                       <div style={{
-                         width:20, height:20, borderRadius:"4px",
-                         background:C.panel,
-                         transform: "rotate(20deg)"
-                       }} />
-                     </div>
-                      <div>
-                        <div style={{ 
-                          fontSize:24, 
-                          fontWeight:700, 
-                          letterSpacing:"-0.02em", 
-                          color: C.text,
-                          fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                        }}>
-                          SCHOLAR SYSTEM
-                        </div>
-                        <div style={{ display:"flex", alignItems:"center", gap:10, marginTop:6 }}>
-                          <StatusPill label="SUPABASE: CONNECTED" ok={true} type="teal" />
-                          <StatusPill label="CF EDGE: ACTIVE" ok={true} type="emerald" />
-                        </div>
-                      </div>
-                   </div>
-
-                   <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8 }} className="items-center sm:items-end">
-                     <span style={{ 
-                       fontSize:12, 
-                       fontWeight: 600,
-                       color: (metrics.cpu < 75 && metrics.ram < 75 && metrics.latency < 60) ? C.success : C.warning, 
-                       letterSpacing:"0.06em",
-                       fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                     }}>
-                       {(metrics.cpu < 75 && metrics.ram < 75 && metrics.latency < 60) ? "INFRASTRUCTURE: OPTIMAL" : "INFRASTRUCTURE: LOADED"}
-                     </span>
-                     <span style={{ 
-                       fontSize:11, 
-                       color:C.textDim, 
-                       letterSpacing:"0.04em",
-                       fontFamily:"'Space Grotesk', system-ui, sans-serif",
-                       fontWeight: 500
-                     }}>
-                       {now()} UTC
-                     </span>
-                   </div>
-                 </div>
-
-                 {/* ── BODY ── */}
-                 <div className="grid grid-cols-1 lg:grid-cols-2 animate-in fade-in duration-500" style={{ minHeight:340 }}>
-
-                   {/* LEFT – metrics */}
-                   <div style={{
-                     padding:"28px 32px",
-                     borderRight:`1px solid ${C.border}`,
-                     display:"flex", flexDirection:"column", gap:28,
-                     background: "var(--bg-panel-left)"
-                   }}>
-                     <div style={{ 
-                       fontSize:11, 
-                       fontWeight:600,
-                       color:C.textSub, 
-                       letterSpacing:"0.1em",
-                       fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                     }}>
-                       NETWORK METRICS
-                     </div>
-
-                     {/* rings row */}
-                     <div style={{ display:"flex", justifyContent:"space-between" }} className="flex-wrap gap-4 sm:flex-nowrap justify-around">
-                       <MetricRing value={metrics.cpu}  max={100} color={metrics.cpu > 70 ? C.danger : metrics.cpu > 50 ? C.warning : C.accent}  label="WORKER"  unit="ms" />
-                       <MetricRing value={metrics.ram}  max={100} color={metrics.ram > 70 ? C.danger : metrics.ram > 50 ? C.warning : C.blue}  label="DB LOAD" unit="%" />
-                       <MetricRing value={metrics.latency}  max={150} color={metrics.latency > 60 ? C.danger : metrics.latency > 30 ? C.warning : C.success}  label="LATENCY" unit="ms" />
-                     </div>
-
-                     {/* mini bars */}
-                     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
-                       {[
-                         { label:"EDGE COMPUTE",  value:metrics.cpu, max:100,  color:C.accent, unit:"ms" },
-                         { label:"CONNECTION POOL", value:metrics.ram, max:100,  color:C.accent, unit:"%" },
-                         { label:"ROUTING PING",  value:metrics.latency, max:150,  color:C.accent, unit:"ms"},
-                       ].map(({ label, value, max, color, unit }) => (
-                         <div key={label}>
-                           <div style={{
-                             display:"flex", justifyContent:"space-between",
-                             marginBottom:8,
-                           }}>
-                             <span style={{ 
-                               fontSize:11, 
-                               fontWeight: 600,
-                               color:C.textSub, 
-                               letterSpacing:"0.06em",
-                               fontFamily:"'Space Grotesk', system-ui, sans-serif" 
-                             }}>
-                               {label}
-                             </span>
-                             <span style={{ 
-                               fontSize:12, 
-                               color, 
-                               fontWeight:700,
-                               fontFamily:"'Space Grotesk', system-ui, sans-serif" 
-                             }}>
-                               {value}{unit}
-                             </span>
-                           </div>
-                           <MiniBar value={value} max={max} color={color} />
-                         </div>
-                       ))}
-                     </div>
-                   </div>
-
-                    {/* RIGHT – console + log */}
-                    <div style={{
-                      padding:"28px 32px",
-                      display:"flex", flexDirection:"column", gap:20,
-                      background: "#0D1117"
-                    }}>
-                      {/* console terminal */}
-                      <div style={{
-                        background:"#161B22",
-                        border:"1px solid rgba(255,255,255,0.08)",
-                        borderRadius:12,
-                        overflow:"hidden",
-                        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)"
-                      }}>
-                        {/* fake titlebar */}
-                        <div style={{
-                          display:"flex", alignItems:"center", gap:8,
-                          padding:"10px 14px",
-                          borderBottom:"1px solid rgba(255,255,255,0.08)",
-                          background:"#090C10",
-                        }}>
-                          {["#ef4444","#f59e0b","#10b981"].map((c,i) => (
-                            <div key={i} style={{
-                              width:10, height:10, borderRadius:"50%", background:c, opacity:.8,
-                            }} />
-                          ))}
-                          <span style={{ 
-                            fontSize:10, 
-                            fontWeight: 600,
-                            color:"#8F9CAE", 
-                            marginLeft:6, 
-                            letterSpacing:"0.04em",
-                            fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                          }}>
-                            admin_shell — code_generator
-                          </span>
-                        </div>
-                        <div style={{ padding:"16px 20px" }}>
-                          <div style={{
-                            fontSize:12,
-                            color:"#E5E7EB",
-                            lineHeight:1.7,
-                            fontFamily: "'Space Grotesk', monospace",
-                            fontWeight: 500
-                          }}>
-                            <span style={{ color:"#E07A3C" }}>admin@scholar ❯ </span>
-                            <span style={{ color:"#10B981" }}>yarn run generate</span>
-                          </div>
-                          
-                          {/* Dynamic JARVIS Terminal Output */}
-                          <div style={{
-                            fontSize:13,
-                            color:"#F3F4F6",
-                            lineHeight:1.6,
-                            marginTop:8,
-                            fontFamily: "system-ui, sans-serif"
-                          }}>
-                            {isTyping ? (
-                              <div className="flex gap-2 items-center py-2">
-                                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce" />
-                                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce [animation-delay:0.2s]" />
-                                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce [animation-delay:0.4s]" />
-                              </div>
-                            ) : (
-                              <span className="font-sans italic font-medium text-white/95">
-                                &quot;{jarvisMessage}&quot;
-                              </span>
-                            )}
-                          </div>
-                          
-                          <div style={{
-                            fontSize:12, color:"#94A3B8", marginTop:10,
-                            display:"flex", alignItems:"center", gap:6,
-                            fontFamily: "'Space Grotesk', monospace"
-                          }}>
-                            <span style={{ color: "#B05C2B" }}>❯</span>
-                            <span style={{ animation:"blink 1.1s step-start infinite", color: "#94A3B8" }}>_</span>
-                          </div>
-                        </div>
-                      </div>
- 
-                      {/* neural sync stream -> API Request Stream */}
-                      <div style={{ flex:1, display:"flex", flexDirection:"column", minHeight:0 }}>
-                        <div style={{
-                          display:"flex", alignItems:"center",
-                          justifyContent:"space-between",
-                          marginBottom:12,
-                        }}>
-                          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                            <span style={{
-                              width:8, height:8, borderRadius:"50%",
-                              background:C.blue,
-                              animation:"blink 1.5s infinite",
-                              display:"inline-block",
-                            }} />
-                            <span style={{ 
-                              fontSize:11, 
-                              fontWeight: 600,
-                              color:C.blue, 
-                              letterSpacing:"0.08em",
-                              fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                            }}>
-                              LIVE API STREAM
-                            </span>
-                          </div>
-                        </div>
- 
-                        <div
-                          ref={logRef}
-                          style={{
-                            flex:1,
-                            overflowY:"auto",
-                            maxHeight:160,
-                            display:"flex",
-                            flexDirection:"column",
-                            gap:6,
-                            scrollBehavior:"smooth",
-                            paddingRight: 8,
-                          }}
-                          className="custom-scrollbar"
-                        >
-                          {neuralLogs.map(log => (
-                            <div key={log.id} style={{
-                              display:"flex", gap:12,
-                              fontSize:12,
-                              lineHeight:1.5,
-                              animation:"fadeUp 0.3s ease",
-                              fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                            }}>
-                              <span style={{
-                                color:"rgba(255,255,255,0.4)",
-                                minWidth:72,
-                                flexShrink:0,
-                                fontWeight: 500,
-                                fontSize: 11
-                              }}>
-                                [{log.time}]
-                              </span>
-                              <span style={{ 
-                                color: log.type === 'success' ? "#10B981" : log.type === 'warning' ? "#F59E0B" : log.type === 'error' ? "#EF4444" : "#E5E7EB",
-                                fontWeight: log.type === 'success' || log.type === 'warning' ? 600 : 500
-                              }}>
-                                {log.msg}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                 </div>
-
-                 {/* ── FOOTER ── */}
-                 <div style={{
-                   borderTop:`1px solid ${C.border}`,
-                   padding:"14px 32px",
-                   display:"flex", justifyContent:"space-between", alignItems:"center",
-                   background: C.panelAlt
-                 }}>
-                   <div style={{ display:"flex", gap:24 }}>
-                     {[
-                       { k:"DATABASE",  v:"ONLINE", c:C.success },
-                       { k:"WORKERS",   v:"14 INSTANCES", c:C.accentDeep  },
-                       { k:"CACHE",     v:"HIT",  c:C.blue    },
-                     ].map(({ k,v,c }) => (
-                       <span key={k} style={{ 
-                         fontSize:10, 
-                         fontWeight: 600,
-                         color:C.textDim, 
-                         letterSpacing:"0.06em",
-                         fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                       }}>
-                         {k}: <span style={{ color:c }}>{v}</span>
-                       </span>
-                     ))}
-                   </div>
-                   <span style={{
-                     fontSize:10, 
-                     fontWeight: 600,
-                     color:C.textDim, 
-                     letterSpacing:"0.04em",
-                     fontFamily:"'Space Grotesk', system-ui, sans-serif"
-                   }}>
-                      UPTIME {metrics.uptime}
-                    </span>
-                  </div>
-               </div>
-            </Interactive3DBox>
-
-           {/* ── ACCESS CODE GENERATOR ── */}
-           <div className="w-full">
-              <div className="flex justify-between items-center gap-6 mb-8">
-                 <div className="space-y-2">
-                    <h2 className="text-4xl font-sans font-bold text-ink tracking-tight flex items-center gap-4">
-                       <Key className="w-10 h-10 text-accent" />
-                       Access Code Generator
-                    </h2>
-                    <p className="text-ink-3 font-bold uppercase tracking-widest text-[10px]">8-Character Pro Access Codes · 3-Day Cooldown · 20-Use Limit</p>
-                 </div>
+        {/* Access Code Generator */}
+        <section className="bg-bg-surface border border-border-default rounded-3xl p-8 shadow-sm">
+          <div className="flex flex-col md:flex-row gap-12">
+            <div className="flex-1 space-y-8">
+              <div>
+                <h2 className="text-xl font-bold flex items-center gap-2 mb-1">
+                  <Key className="w-5 h-5 text-accent" /> Access Code Generator
+                </h2>
+                <p className="text-sm text-text-secondary">Generate 8-character codes to grant users permanent Pro access.</p>
               </div>
 
-              <div className="w-full glass-card text-text-primary transition-colors rounded-[40px] overflow-hidden relative shadow-sm group">
-                 <div className="p-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Left: Code Display */}
-                    <div className="space-y-8">
-                       <div className="space-y-3">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">Current Active Code</p>
-                          {codeInfo?.code ? (
-                             <div className="relative group/code">
-                                <div className="bg-bg border-2 border-accent/20 rounded-2xl p-6 flex items-center justify-between gap-4">
-                                   <span className="font-mono text-3xl font-black text-accent tracking-[0.3em] select-all">
-                                      {codeInfo.code}
-                                   </span>
-                                   <button
-                                      onClick={handleCopyCode}
-                                      className="p-3 rounded-xl bg-accent/5 border border-accent/10 hover:bg-accent/10 transition-all active:scale-95"
-                                   >
-                                      {codeCopied ? (
-                                         <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                      ) : (
-                                         <Copy className="w-5 h-5 text-accent" />
-                                      )}
-                                   </button>
-                                </div>
-                             </div>
-                          ) : (
-                             <div className="bg-white/40 dark:bg-bg-surface backdrop-blur-xl border border-border-subtle border-2 border-dashed border-black/10 dark:border-[#333] rounded-2xl p-6 flex items-center justify-center">
-                                <span className="text-text-secondary text-sm font-bold uppercase tracking-widest">No Active Code</span>
-                             </div>
-                          )}
-                       </div>
-
-                       {/* Code Stats */}
-                       <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white/40 dark:bg-bg-surface backdrop-blur-xl border border-border-subtle border border-black/10 dark:border-[#333] rounded-2xl p-5 space-y-2">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Uses</p>
-                             <div className="flex items-end gap-2">
-                                <span className="text-3xl font-sans font-black text-text-primary">{codeInfo?.usesCount ?? 0}</span>
-                                <span className="text-base text-text-secondary font-bold mb-1">/ {codeInfo?.maxUses ?? 20}</span>
-                             </div>
-                             <div className="h-1.5 w-full bg-accent/5 rounded-full overflow-hidden">
-                                <div 
-                                   className="h-full bg-accent transition-all duration-700 rounded-full"
-                                   style={{ width: `${((codeInfo?.usesCount ?? 0) / (codeInfo?.maxUses ?? 20)) * 100}%` }}
-                                />
-                             </div>
-                          </div>
-                          <div className="bg-white/40 dark:bg-bg-surface backdrop-blur-xl border border-border-subtle border border-black/10 dark:border-[#333] rounded-2xl p-5 space-y-2">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Expiry</p>
-                             <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-accent flex-shrink-0" />
-                                <span className="text-sm font-bold text-text-primary">{getCodeExpiryDisplay() ?? "—"}</span>
-                             </div>
-                             {codeInfo?.expiresAt && (
-                                <p className="text-[10px] text-text-secondary">{new Date(codeInfo.expiresAt).toLocaleDateString()}</p>
-                             )}
-                          </div>
-                       </div>
-                    </div>
-
-                    {/* Right: Generate & Status */}
-                    <div className="space-y-8 flex flex-col justify-between">
-                       <div className="space-y-6">
-                          <div className={cn(
-                             "p-5 rounded-2xl border flex items-start gap-4",
-                             codeInfo?.canGenerate
-                                ? "bg-[#DCFCE7] border-[#BBF7D0] text-[#166534] dark:bg-green-950/20 dark:border-green-900/40 dark:text-green-400"
-                                : "bg-[#FEF3C7] border-[#FDE68A] text-[#92400E] dark:bg-amber-950/20 dark:border-amber-900/40 dark:text-amber-400"
-                          )}>
-                             {codeInfo?.canGenerate ? (
-                                <Unlock className="w-5 h-5 text-[#166534] dark:text-green-400 flex-shrink-0 mt-0.5" />
-                             ) : (
-                                <Lock className="w-5 h-5 text-[#92400E] dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                             )}
-                             <div>
-                                <p className={cn(
-                                   "text-xs font-black uppercase tracking-widest",
-                                   codeInfo?.canGenerate ? "text-[#166534] dark:text-green-400" : "text-[#92400E] dark:text-amber-400"
-                                )}>
-                                   {codeInfo?.canGenerate ? "Ready to Generate" : "Cooldown Active"}
-                                </p>
-                                <p className={cn(
-                                   "text-[11px] mt-1",
-                                   codeInfo?.canGenerate ? "text-[#15803d] dark:text-green-400/80" : "text-[#b45309] dark:text-amber-400/80"
-                                )}>
-                                   {codeInfo?.canGenerate
-                                      ? "No active cooldown. A new code can be issued."
-                                      : `${codeInfo?.cooldownDaysLeft ?? 3} day(s) remaining before next code can be generated.`
-                                   }
-                                </p>
-                             </div>
-                          </div>
-
-                          <div className="space-y-3 text-[11px] text-[#555555] dark:text-gray-400 font-medium">
-                             <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                                Codes are 8-character alphanumeric
-                             </div>
-                             <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                                Each code expires after 3 days
-                             </div>
-                             <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                                Maximum 20 uses per code
-                             </div>
-                             <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                                Grants permanent Pro access to user
-                             </div>
-                          </div>
-                       </div>
-
-                       <button
-                          onClick={handleGenerateCode}
-                          disabled={isGenerating || !codeInfo?.canGenerate}
-                          className={cn(
-                             "w-full py-5 px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-sm active:scale-95",
-                             codeInfo?.canGenerate && !isGenerating
-                                ? "bg-accent text-white hover:bg-accent/90 shadow-accent/20"
-                                : "bg-border-strong text-ink-4 cursor-not-allowed"
-                          )}
-                       >
-                         {isGenerating ? (
-                            <RefreshCw className="w-5 h-5 animate-spin" />
-                         ) : (
-                            <Key className="w-5 h-5" />
-                         )}
-                         {isGenerating ? "Generating..." : "Generate New Code"}
+              <div className="space-y-4">
+                <div className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Current Code</span>
+                  {codeInfo?.code ? (
+                    <div className="flex items-center justify-between p-4 bg-bg border border-border-default rounded-xl">
+                      <span className="font-mono text-2xl font-bold tracking-widest text-text-primary select-all">
+                        {codeInfo.code}
+                      </span>
+                      <button
+                        onClick={handleCopyCode}
+                        className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                      >
+                        {codeCopied ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
                       </button>
                     </div>
-                 </div>
+                  ) : (
+                    <div className="p-4 bg-bg border border-border-default border-dashed rounded-xl text-text-secondary text-sm flex items-center justify-center">
+                      No active code
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-bg border border-border-default rounded-xl">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary block mb-2">Uses</span>
+                    <div className="flex items-end gap-1">
+                      <span className="text-2xl font-bold">{codeInfo?.usesCount ?? 0}</span>
+                      <span className="text-sm text-text-secondary mb-1">/ {codeInfo?.maxUses ?? 20}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full mt-3 overflow-hidden">
+                      <div 
+                        className="h-full bg-accent transition-all duration-500"
+                        style={{ width: `${Math.min(((codeInfo?.usesCount ?? 0) / (codeInfo?.maxUses ?? 20)) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-4 bg-bg border border-border-default rounded-xl">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary block mb-2">Expiry</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Clock className="w-4 h-4 text-accent" />
+                      <span className="font-medium text-sm">{getCodeExpiryDisplay() ?? "—"}</span>
+                    </div>
+                    {codeInfo?.expiresAt && (
+                      <p className="text-xs text-text-secondary mt-2">{new Date(codeInfo.expiresAt).toLocaleDateString()}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-           </div>
-
-           {/* ── WAITLIST USERS & PRO ACCESS LIST ── */}
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-6">
-              {/* Waitlist Users */}
-              <div className="space-y-6">
-                 <div className="flex justify-between items-center mb-4">
-                    <div className="space-y-2">
-                       <h2 className="text-4xl font-sans font-bold text-ink tracking-tight flex items-center gap-4">
-                          <ListChecks className="w-10 h-10 text-accent" />
-                          Waitlist Users
-                       </h2>
-                       <p className="text-ink-3 font-bold uppercase tracking-widest text-[10px]">{waitlistUsers.length} Users Registered</p>
-                    </div>
-                 </div>
-
-                 {/* Search Bar for Waitlist */}
-                 <div className="relative mb-6">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary w-4 h-4" />
-                    <input 
-                       value={waitlistSearch}
-                       onChange={(e) => setWaitlistSearch(e.target.value)}
-                       placeholder="Search waitlist emails..."
-                       className="w-full bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-xl py-3 pl-12 pr-4 text-sm font-medium text-text-primary outline-none focus:border-accent transition-all placeholder:text-text-secondary shadow-sm"
-                    />
-                 </div>
-
-                 <div className="w-full glass-card text-text-primary dark:text-text-primary transition-colors rounded-[40px] overflow-hidden relative shadow-lg">
-                    <div className="p-8">
-                       {filteredWaitlist.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center py-16 text-center gap-4">
-                             <Mail className="w-12 h-12 text-ink-4" />
-                             <p className="text-ink-4 text-sm font-bold uppercase tracking-widest">No waitlist users yet</p>
-                          </div>
-                       ) : (
-                          <div className="space-y-3 h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                             {filteredWaitlist.map((u) => (
-                               <div key={u.id} className="p-4 bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-2xl hover:bg-[#F9FAFB] dark:hover:bg-[#1C1C20] transition-all">
-                                  <div className="flex items-center gap-4">
-                                     <div className="w-10 h-10 rounded-xl bg-bg-elevated border border-[#E5E7EB] dark:border-border-default flex items-center justify-center font-bold text-text-secondary text-sm">
-                                        {u.email[0].toUpperCase()}
-                                     </div>
-                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-bold text-text-primary truncate">{u.email}</p>
-                                        <p className="text-[10px] text-text-secondary mt-0.5">{new Date(u.created_at).toLocaleDateString()}</p>
-                                     </div>
-                                     <Mail className="w-4 h-4 text-text-secondary flex-shrink-0" />
-                                  </div>
-                               </div>
-                             ))}
-                          </div>
-                       )}
-                       <div className="mt-6 pt-5 border-t border-[#E5E7EB] dark:border-border-default flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
-                          <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Live Waitlist Feed</span>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-
-              {/* Pro Access List */}
-              <div className="space-y-6">
-                 <div className="flex justify-between items-center mb-4">
-                    <div className="space-y-2">
-                       <h2 className="text-4xl font-sans font-bold text-ink tracking-tight flex items-center gap-4">
-                          <UserCheck className="w-10 h-10 text-accent" />
-                          Pro Access List
-                       </h2>
-                       <p className="text-ink-3 font-bold uppercase tracking-widest text-[10px]">{proAccessUsers.length} Code Redemptions</p>
-                    </div>
-                 </div>
-
-                 {/* Search Bar for Pro Access */}
-                 <div className="relative mb-6">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary w-4 h-4" />
-                    <input 
-                        value={proSearch}
-                        onChange={(e) => setProSearch(e.target.value)}
-                        placeholder="Search pro access emails..."
-                        className="w-full bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-xl py-3 pl-12 pr-4 text-sm font-medium text-text-primary outline-none focus:border-accent transition-all placeholder:text-text-secondary shadow-sm"
-                     />
-</div>
-
-                 <div className="w-full glass-card text-text-primary dark:text-text-primary transition-colors rounded-[40px] overflow-hidden relative shadow-lg">
-                    <div className="p-8">
-                       {filteredProAccess.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center py-16 text-center gap-4">
-                             <Crown className="w-12 h-12 text-ink-4" />
-                             <p className="text-ink-4 text-sm font-bold uppercase tracking-widest">No redemptions yet</p>
-                          </div>
-                       ) : (
-                          <div className="space-y-3 h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                             {filteredProAccess.map((u) => (
-                               <div key={u.id} className="p-4 bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-2xl hover:bg-[#F9FAFB] dark:hover:bg-[#1C1C20] transition-all">
-                                  <div className="flex items-center gap-4">
-                                     <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center font-bold text-accent text-sm">
-                                        <Crown className="w-4 h-4" />
-                                     </div>
-                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-bold text-text-primary truncate">{u.email}</p>
-                                        <p className="text-[10px] text-text-secondary mt-0.5">Code: <span className="font-mono text-accent">{u.code_used}</span> · {new Date(u.granted_at).toLocaleDateString()}</p>
-                                     </div>
-                                     <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                                  </div>
-                               </div>
-                             ))}
-                          </div>
-                       )}
-                       <div className="mt-6 pt-5 border-t border-[#E5E7EB] dark:border-border-default flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                          <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Permanent Pro Access Records</span>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-
-           <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-start">
-              {/* Database Console */}
-              <div className="xl:col-span-8 space-y-10">
-                 <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-                    <div className="space-y-2">
-                       <h2 className="text-4xl font-sans font-bold text-ink tracking-tight flex items-center gap-4">
-                          <Database className="w-10 h-10 text-accent" />
-                          Registry
-                       </h2>
-                       <p className="text-ink-3 font-bold uppercase tracking-widest text-[10px]">Management of Authorized Nodes</p>
-                    </div>
-                    
-                    <button 
-                       onClick={() => setIsAdding(!isAdding)}
-                       className="bg-accent text-text-primary px-8 py-4 rounded-2xl flex items-center gap-3 hover:bg-accent/90 transition-all shadow-sm active:scale-95"
-                    >
-                       <Plus className="w-4 h-4" />
-                       <span className="font-bold text-xs uppercase tracking-widest">Provision New Node</span>
-                    </button>
-                 </div>
-
-                 {/* Search Bar for Registry */}
-                 <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#888] dark:text-gray-500 w-4 h-4" />
-                    <input 
-                       value={registrySearch}
-                       onChange={(e) => setRegistrySearch(e.target.value)}
-                       placeholder="Search registry by email..."
-                       className="w-full bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-xl py-3 pl-12 pr-4 text-sm font-medium text-text-primary outline-none focus:border-accent transition-all placeholder:text-text-secondary shadow-sm"
-                    />
-                 </div>
-
-                 {isAdding && (
-                    <form onSubmit={handleAddUser} className="bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default p-8 rounded-[30px] flex flex-col md:flex-row gap-4 shadow-sm animate-in slide-in-from-top-4 duration-300">
-                       <div className="flex-1 relative">
-                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-ink-3 w-4 h-4" />
-                          <input 
-                            value={newEmail}
-                            onChange={(e) => setNewEmail(e.target.value)}
-                            placeholder="Input account email..."
-                            className="w-full bg-bg border border-border-strong rounded-xl py-4 pl-14 pr-6 text-sm font-medium text-ink outline-none focus:border-accent transition-all"
-                            required
-                          />
-                       </div>
-                       <button type="submit" className="bg-accent text-text-primary px-10 py-4 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-all shadow-sm">
-                          Authorize Access
-                       </button>
-                    </form>
-                 )}
-
-                 {/* Table Box */}
-                 <div className="bg-white dark:bg-bg-surface border border-[#E5E7EB] dark:border-border-default rounded-[40px] overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                       <table className="w-full text-left border-collapse">
-                          <thead>
-                             <tr className="bg-bg border-b border-[#E5E7EB] dark:border-border-default">
-                                <th className="px-10 py-8 text-[10px] font-bold uppercase tracking-widest text-ink-2">Identity</th>
-                                <th className="px-10 py-8 text-[10px] font-bold uppercase tracking-widest text-ink-2">Access Level</th>
-                                <th className="px-10 py-8 text-[10px] font-bold uppercase tracking-widest text-ink-2">Status</th>
-                                <th className="px-10 py-8 text-[10px] font-bold uppercase tracking-widest text-ink-2 text-right">Actions</th>
-                             </tr>
-                          </thead>
-                          <tbody className="divide-y divide-[#E5E7EB] dark:divide-border-default">
-                             {filteredSubscriptions.map((s) => (
-                               <tr key={s.id} className="hover:bg-bg/30 transition-all">
-                                  <td className="px-10 py-8">
-                                     <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 rounded-xl bg-bg border border-border-strong flex items-center justify-center font-bold text-ink-3 text-sm">
-                                           {s.email[0].toUpperCase()}
-                                        </div>
-                                        <div>
-                                           <p className="text-base font-bold text-ink">{s.email}</p>
-                                           <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">Verified Sector</span>
-                                        </div>
-                                     </div>
-                                  </td>
-                                  <td className="px-10 py-8">
-                                     <div className={cn(
-                                       "inline-flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest border",
-                                       isActuallyPro(s) 
-                                         ? "bg-accent/10 border-accent/20 text-accent" 
-                                         : "bg-bg border-border-strong text-ink-3"
-                                     )}>
-                                        {isActuallyPro(s) ? <Zap className="w-3.5 h-3.5" /> : <Monitor className="w-3.5 h-3.5" />}
-                                        {isActuallyPro(s) ? 'Elite Access' : 'Standard'}
-                                     </div>
-                                  </td>
-                                  <td className="px-10 py-8">
-                                     <div className="flex items-center gap-2">
-                                        <div className={cn("w-2 h-2 rounded-full", isActuallyPro(s) ? "bg-accent" : "bg-ink-4")} />
-                                        <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">Active</span>
-                                     </div>
-                                  </td>
-                                  <td className="px-10 py-8 text-right">
-                                     <div className="flex items-center justify-end gap-5">
-                                        <button 
-                                           onClick={() => handleTogglePro(s.email, s.plan)}
-                                           className={cn(
-                                             "px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest border transition-all active:scale-95",
-                                             s.plan === 'pro'
-                                               ? "bg-stone-100 border-border-strong text-ink-2 hover:bg-stone-200"
-                                               : "bg-accent text-text-primary hover:bg-accent/90"
-                                           )}
-                                        >
-                                           {s.plan === 'pro' ? 'Revoke Elite' : 'Grant Elite'}
-                                        </button>
-                                        <button 
-                                           onClick={() => handleDeleteUser(s.email)}
-                                           className="p-2.5 text-ink-4 hover:text-red-600 transition-colors"
-                                        >
-                                           <Trash2 className="w-5 h-5" />
-                                        </button>
-                                     </div>
-                                  </td>
-                               </tr>
-                             ))}
-                          </tbody>
-                       </table>
-                    </div>
-
-                    {/* Matrix Controller Footer */}
-                    <div className="px-10 py-8 bg-bg border-t border-[#E5E7EB] dark:border-border-default flex flex-col md:flex-row items-center justify-between gap-8">
-                       <p className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">{filteredSubscriptions.length} System Nodes Identified</p>
-                       <div className="flex gap-3">
-                          <button className="p-4 border border-border-strong rounded-xl text-ink-3 hover:text-accent transition-all"><ArrowLeft className="w-4 h-4" /></button>
-                          <button className="px-6 py-4 border border-border-strong rounded-xl text-ink-3 hover:text-accent transition-all flex items-center gap-3 group">
-                             <span className="text-[10px] font-bold uppercase tracking-widest">Next Sector</span>
-                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                          </button>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-
-              {/* Session History Sidebar */}
-              <div className="xl:col-span-4 space-y-10">
-                 <div className="flex justify-between items-center gap-6">
-                    <div className="space-y-2">
-                       <h2 className="text-4xl font-sans font-bold text-ink tracking-tight flex items-center gap-4">
-                          <Radar className="w-10 h-10 text-accent" />
-                          Logs
-                       </h2>
-                       <p className="text-ink-3 font-bold uppercase tracking-widest text-[10px]">Temporal Analysis</p>
-                    </div>
-                    <ActivityIcon className="w-6 h-6 text-ink-4" />
-                 </div>
-
-                 <div className="w-full glass-card text-text-primary dark:text-text-primary transition-colors rounded-[40px] border border-black/10 dark:border-[#333] overflow-hidden relative shadow-lg">
-                    <div className="p-8">
-                       <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                          {recentLogins.map((user) => (
-                             <div key={user.id} className="p-4 bg-white/40 dark:bg-bg-surface backdrop-blur-xl border border-border-subtle border border-black/10 dark:border-[#333] rounded-2xl hover:bg-[#333] transition-all">
-                                <div className="flex items-center gap-4">
-                                   <div className="w-10 h-10 rounded-xl glass-card border border-black/10 dark:border-[#333] flex items-center justify-center font-bold text-text-secondary text-sm">
-                                      {user.email[0].toUpperCase()}
-                                   </div>
-                                   <div className="flex-1 min-w-0">
-                                      <p className="text-xs font-bold text-text-primary truncate">{user.email}</p>
-                                      <p className="text-[10px] text-text-secondary mt-0.5">{new Date(user.created_at).toLocaleDateString()}</p>
-                                   </div>
-                                   <div className="text-right">
-                                      <p className="text-xs font-bold text-accent">{new Date(user.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                      <span className="text-[8px] font-bold text-[#888] dark:text-gray-500 uppercase tracking-tighter">SECURED</span>
-                                   </div>
-                                </div>
-                             </div>
-                          ))}
-                       </div>
-
-                       <div className="mt-8 pt-6 border-t border-border-strong">
-                          <div className="flex items-center gap-3">
-                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                             <span className="text-[9px] font-bold text-ink-3 uppercase tracking-widest">Monitoring Nodes</span>
-                          </div>
-                       </div>
-                     </div>
-               </div>
             </div>
-           </div>
-        </div>
 
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="space-y-6">
+                <div className={cn(
+                  "p-4 rounded-xl border flex items-start gap-3",
+                  codeInfo?.canGenerate
+                    ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-950/30 dark:border-green-900/50 dark:text-green-400"
+                    : "bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/30 dark:border-amber-900/50 dark:text-amber-400"
+                )}>
+                  {codeInfo?.canGenerate ? (
+                    <Unlock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <Lock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  )}
+                  <div>
+                    <h3 className="font-semibold text-sm">
+                      {codeInfo?.canGenerate ? "Ready to Generate" : "Cooldown Active"}
+                    </h3>
+                    <p className="text-xs mt-1 opacity-90 leading-relaxed">
+                      {codeInfo?.canGenerate
+                        ? "No active cooldown. A new access code can be issued immediately."
+                        : `${codeInfo?.cooldownDaysLeft ?? 3} day(s) remaining before the next code can be generated.`
+                      }
+                    </p>
+                  </div>
+                </div>
+
+                <ul className="space-y-2 text-sm text-text-secondary">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
+                    Codes are 8-character alphanumeric
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
+                    Each code expires after 3 days
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
+                    Maximum 20 uses per code
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                onClick={handleGenerateCode}
+                disabled={isGenerating || !codeInfo?.canGenerate}
+                className={cn(
+                  "mt-6 w-full py-3.5 px-6 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2",
+                  codeInfo?.canGenerate && !isGenerating
+                    ? "bg-accent text-white hover:bg-accent/90 active:scale-[0.98]"
+                    : "bg-black/5 dark:bg-white/5 text-text-tertiary cursor-not-allowed"
+                )}
+              >
+                {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
+                {isGenerating ? "Generating..." : "Generate New Code"}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Waitlist & Pro Access */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Waitlist */}
+          <div className="bg-bg-surface border border-border-default rounded-3xl p-6 shadow-sm flex flex-col h-[500px]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <ListChecks className="w-5 h-5 text-text-tertiary" /> Waitlist
+              </h2>
+              <span className="text-xs font-semibold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
+                {waitlistUsers.length} Users
+              </span>
+            </div>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+              <input
+                value={waitlistSearch}
+                onChange={(e) => setWaitlistSearch(e.target.value)}
+                placeholder="Search waitlist..."
+                className="w-full bg-bg border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+              {filteredWaitlist.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-sm">
+                  <Mail className="w-8 h-8 mb-2 opacity-50" />
+                  No users found
+                </div>
+              ) : (
+                filteredWaitlist.map(u => (
+                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg border border-border-default rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-border-default flex items-center justify-center text-xs font-bold text-text-secondary">
+                      {u.email[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{u.email}</p>
+                      <p className="text-xs text-text-tertiary">{new Date(u.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Pro Access List */}
+          <div className="bg-bg-surface border border-border-default rounded-3xl p-6 shadow-sm flex flex-col h-[500px]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-accent" /> Redemptions
+              </h2>
+              <span className="text-xs font-semibold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
+                {proAccessUsers.length} Users
+              </span>
+            </div>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+              <input
+                value={proSearch}
+                onChange={(e) => setProSearch(e.target.value)}
+                placeholder="Search redemptions..."
+                className="w-full bg-bg border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+              {filteredProAccess.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-sm">
+                  <Crown className="w-8 h-8 mb-2 opacity-50" />
+                  No redemptions yet
+                </div>
+              ) : (
+                filteredProAccess.map(u => (
+                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg border border-border-default rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center text-accent border border-accent/20">
+                      <Crown className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{u.email}</p>
+                      <p className="text-xs text-text-tertiary flex items-center gap-2">
+                        <span className="font-mono bg-black/5 dark:bg-white/5 px-1 py-0.5 rounded border border-border-default">{u.code_used}</span>
+                        {new Date(u.granted_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Registry Table */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Database className="w-5 h-5 text-text-tertiary" /> Registry
+            </h2>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <input
+                  value={registrySearch}
+                  onChange={(e) => setRegistrySearch(e.target.value)}
+                  placeholder="Search registry..."
+                  className="w-full bg-bg-surface border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors shadow-sm"
+                />
+              </div>
+              <button
+                onClick={() => setIsAdding(!isAdding)}
+                className="bg-text-primary text-bg px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.98] whitespace-nowrap shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Add Node
+              </button>
+            </div>
+          </div>
+
+          {isAdding && (
+            <form onSubmit={handleAddUser} className="bg-bg-surface border border-border-default p-6 rounded-2xl flex flex-col sm:flex-row gap-4 shadow-sm animate-in fade-in slide-in-from-top-2">
+              <div className="flex-1 relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
+                <input 
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="Enter user email..."
+                  className="w-full bg-bg border border-border-default rounded-xl py-2 pl-11 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+                  required
+                />
+              </div>
+              <button type="submit" className="bg-accent text-white px-6 py-2 rounded-xl font-medium text-sm hover:bg-accent/90 transition-colors">
+                Authorize
+              </button>
+            </form>
+          )}
+
+          <div className="bg-bg-surface border border-border-default rounded-3xl overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-bg border-b border-border-default">
+                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Identity</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Access Level</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-default">
+                  {filteredSubscriptions.map((s) => (
+                    <tr key={s.id} className="hover:bg-bg/50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-bg border border-border-default flex items-center justify-center font-semibold text-text-secondary text-sm">
+                            {s.email[0].toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold">{s.email}</p>
+                            <p className="text-xs text-text-tertiary mt-0.5">Joined {new Date(s.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={cn(
+                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border",
+                          isActuallyPro(s) 
+                            ? "bg-accent/10 border-accent/20 text-accent" 
+                            : "bg-bg border-border-default text-text-secondary"
+                        )}>
+                          {isActuallyPro(s) ? <Zap className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
+                          {isActuallyPro(s) ? 'Pro Access' : 'Standard'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-sm text-text-secondary">
+                          <div className={cn("w-1.5 h-1.5 rounded-full", isActuallyPro(s) ? "bg-accent" : "bg-text-tertiary")} />
+                          Active
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                          <button 
+                            onClick={() => handleTogglePro(s.email, s.plan)}
+                            className={cn(
+                              "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border",
+                              s.plan === 'pro'
+                                ? "bg-bg border-border-default text-text-secondary hover:text-text-primary"
+                                : "bg-accent/10 border-accent/20 text-accent hover:bg-accent hover:text-white"
+                            )}
+                          >
+                            {s.plan === 'pro' ? 'Revoke' : 'Upgrade'}
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteUser(s.email)}
+                            className="p-1.5 text-text-tertiary hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10"
+                            title="Remove user"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-4 bg-bg border-t border-border-default flex items-center justify-between">
+              <span className="text-xs text-text-secondary font-medium">{filteredSubscriptions.length} nodes total</span>
+            </div>
+          </div>
+        </section>
       </main>
-
-      {/* Industrial Grade Footer */}
-      <footer className="mt-40 border-t border-[#E5E7EB] dark:border-border-default py-8 px-12 bg-white dark:bg-bg-surface shadow-sm">
-         <div className="max-w-[1240px] mx-auto flex justify-center items-center text-[13px] text-ink-3">
-            <span>© 2026 Scholar Atlas. All rights reserved.</span>
-         </div>
-      </footer>
-
-      {/* Global Style Injector */}
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(34, 211, 238, 0.01);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(34, 211, 238, 0.1);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(34, 211, 238, 0.3);
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes reverse-spin {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 15s linear infinite;
-        }
-        .animate-reverse-spin {
-          animation: reverse-spin 10s linear infinite;
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        .animate-shimmer {
-          background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.1), transparent);
-          background-size: 200% 100%;
-          animation: shimmer 4s infinite linear;
-        }
-        .perspective-2000 {
-          perspective: 2000px;
-        }
-        .transform-gpu {
-          transform-style: preserve-3d;
-          transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .group:hover .transform-gpu {
-          transform: rotateY(-5deg) rotateX(2deg) translateZ(20px);
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.1; transform: scale(1); }
-          50% { opacity: 0.3; transform: scale(1.05); }
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 6s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }

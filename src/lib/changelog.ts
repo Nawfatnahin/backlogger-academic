@@ -14,6 +14,15 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.1",
+    date: "2026-07-28",
+    summary: "Admin Panel Redesign & Slop Removal",
+    changes: [
+      { type: "IMPROVED", description: "Completely redesigned the Admin Panel to a formal, premium B2B SaaS aesthetic" },
+      { type: "REMOVED", description: "Removed Scholar OS gimmicky widgets and 3D hover effects from the admin dashboard" },
+    ],
+  },
+  {
     version: "1.4.0",
     date: "2026-07-28",
     summary: "Pending Tasks Alignment & Interactive Attendance Glow Selection",

@@ -2,6 +2,13 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.1] — 2026-07-28
+
+### Improved
+- **Admin Panel Redesign**: Completely redesigned the Admin Panel to a formal, premium B2B SaaS aesthetic, removing the gimmicky Scholar OS widgets and 3D hover effects.
+
+---
+
 ## [1.4.0] — 2026-07-28
 
 ### Added
