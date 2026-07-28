@@ -2,6 +2,16 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.0] — 2026-07-28
+
+### Added
+- **Attendance Glowing Selection State**: Implemented continuous glowing visual feedback on attendance options (Present, Absent, Cancelled, Holiday) that persists until selection changes or element disappears.
+
+### Fixed
+- **Pending Tasks Dashboard Synchronization**: Aligned the dashboard pending tasks counter query to include all non-completed task board tasks (`todo` and `in-progress`).
+
+---
+
 ## [1.3.1] — 2026-06-16
 
 ### Improved

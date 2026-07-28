@@ -344,7 +344,7 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({
                             onClick={() => setExtraClassStatus('present')}
                             className={`flex-1 text-[9px] font-black uppercase tracking-wider rounded-lg border transition-all ${
                               extraClassStatus === 'present'
-                                ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-800/30"
+                                ? "bg-green-600 text-white border-green-400 shadow-[0_0_14px_rgba(34,197,94,0.7)] ring-2 ring-green-400/50"
                                 : "bg-bg-base text-text-tertiary border-border-strong hover:text-text-primary dark:bg-bg-surface"
                             }`}
                           >
@@ -355,7 +355,7 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({
                             onClick={() => setExtraClassStatus('unexcused')}
                             className={`flex-1 text-[9px] font-black uppercase tracking-wider rounded-lg border transition-all ${
                               extraClassStatus === 'unexcused'
-                                ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-800/30"
+                                ? "bg-red-600 text-white border-red-400 shadow-[0_0_14px_rgba(239,68,68,0.7)] ring-2 ring-red-400/50"
                                 : "bg-bg-base text-text-tertiary border-border-strong hover:text-text-primary dark:bg-bg-surface"
                             }`}
                           >

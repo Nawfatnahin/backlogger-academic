@@ -14,6 +14,15 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.0",
+    date: "2026-07-28",
+    summary: "Pending Tasks Alignment & Interactive Attendance Glow Selection",
+    changes: [
+      { type: "FIXED", description: "Aligned Pending Tasks query on dashboard to count all active tasks (todo and in-progress) from the Task Board" },
+      { type: "NEW", description: "Added persistent glowing visual feedback to selected attendance options (Present, Absent, Cancelled, Holiday) until changed" },
+    ],
+  },
+  {
     version: "1.3",
     date: "2026-05-30",
     summary: "Multi-Semester CGPA Manager, UserBadge Mobile Layout, and Search Optimization",

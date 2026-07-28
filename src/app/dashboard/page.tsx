@@ -55,7 +55,7 @@ export default async function DashboardPage() {
     try {
       const [subjectsRes, tasksRes, todaysSessionsRes, globalLinksData] = await Promise.all([
         supabase.from('subjects').select('id, name, target_percentage, class_sessions(status)').in('class_sessions.status', ['present', 'absent']),
-        supabase.from('tasks').select('id').eq('status', 'todo'),
+        supabase.from('tasks').select('id').in('status', ['todo', 'in-progress']),
         getTodaysSessions(),
         getGlobalResourceLinks(),
       ]);
