@@ -314,10 +314,10 @@ export default function AdminPanel({
       <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-12">
         {/* Bento Stats Row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <SpotlightCard className="flex flex-col justify-between h-48">
+          <SpotlightCard className="flex flex-col justify-between h-52">
              <div className="flex items-start justify-between">
-                <div className="p-3.5 bg-accent/10 text-accent rounded-2xl border border-accent/15">
-                  <Users className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
+                  <img src="/icon_active_nodes.png" alt="Active Nodes Icon" className="w-full h-full object-cover rounded-xl" />
                 </div>
                 <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                   <Activity className="w-3.5 h-3.5" /> Node Pulse
@@ -329,10 +329,10 @@ export default function AdminPanel({
              </div>
           </SpotlightCard>
 
-          <SpotlightCard className="flex flex-col justify-between h-48">
+          <SpotlightCard className="flex flex-col justify-between h-52">
              <div className="flex items-start justify-between">
-                <div className="p-3.5 bg-accent/10 text-accent rounded-2xl border border-accent/15">
-                  <Crown className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
+                  <img src="/icon_system_master.png" alt="System Master Icon" className="w-full h-full object-cover rounded-xl" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary bg-bg/80 border border-border-default px-2.5 py-1 rounded-md">Master Node</span>
              </div>
@@ -342,10 +342,10 @@ export default function AdminPanel({
              </div>
           </SpotlightCard>
 
-          <SpotlightCard className="flex flex-col justify-between h-48" spotlightColor="rgba(59, 130, 246, 0.14)">
+          <SpotlightCard className="flex flex-col justify-between h-52" spotlightColor="rgba(59, 130, 246, 0.14)">
              <div className="flex items-start justify-between">
-                <div className="p-3.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/15">
-                  <Zap className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
+                  <img src="/icon_elite_nodes.png" alt="Elite Nodes Icon" className="w-full h-full object-cover rounded-xl" />
                 </div>
                 <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">
                   <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} /> Elite Subscriptions

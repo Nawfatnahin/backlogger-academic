@@ -2,6 +2,13 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.4] — 2026-07-28
+
+### Added
+- **3D Icon Assets**: Generated and added custom 3D glassmorphic icon assets for Active Nodes, System Master, and Elite Subscriptions stats cards.
+
+---
+
 ## [1.4.3] — 2026-07-28
 
 ### Improved

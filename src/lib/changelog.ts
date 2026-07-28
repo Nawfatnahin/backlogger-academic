@@ -14,6 +14,14 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.4",
+    date: "2026-07-28",
+    summary: "Bespoke 3D Glassmorphic Stats Icons Integration",
+    changes: [
+      { type: "NEW", description: "Generated and integrated custom 3D glassmorphic icon assets for Active Nodes, System Master, and Elite Subscriptions stats cards" },
+    ],
+  },
+  {
     version: "1.4.3",
     date: "2026-07-28",
     summary: "Typography Scale Optimization & Header Cleanup",
