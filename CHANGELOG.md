@@ -2,6 +2,13 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.2] — 2026-07-28
+
+### Improved
+- **Spotlight Cards & Refraction**: Implemented cursor-tracking SpotlightCard components with radial highlights, edge refraction borders, and custom background texture assets.
+
+---
+
 ## [1.4.1] — 2026-07-28
 
 ### Improved

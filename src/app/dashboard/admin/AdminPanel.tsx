@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
-  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck
+  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck, Sparkles, Activity
 } from "lucide-react";
 import { toggleProStatus, deleteSubscription, generateAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList } from "./actions";
 import { toast } from "sonner";
@@ -12,6 +12,59 @@ import { twMerge } from "tailwind-merge";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+// Spotlight Card component with cursor-tracking refraction border
+function SpotlightCard({ 
+  children, 
+  className,
+  spotlightColor = "rgba(224, 122, 60, 0.12)"
+}: { 
+  children: React.ReactNode; 
+  className?: string;
+  spotlightColor?: string;
+}) {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [opacity, setOpacity] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!divRef.current) return;
+    const rect = divRef.current.getBoundingClientRect();
+    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  return (
+    <div
+      ref={divRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setOpacity(1)}
+      onMouseLeave={() => setOpacity(0)}
+      className={cn(
+        "relative overflow-hidden rounded-3xl border border-border-default/80 bg-bg-surface p-6 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-0.5",
+        className
+      )}
+    >
+      {/* Background Texture Overlay */}
+      <div 
+        className="absolute inset-0 bg-[url('/admin_bg_texture.png')] bg-cover bg-center opacity-[0.03] dark:opacity-[0.08] pointer-events-none" 
+      />
+
+      {/* Interactive Spotlight Radial Gradient */}
+      <div
+        className="pointer-events-none absolute -inset-px transition-opacity duration-500 rounded-3xl"
+        style={{
+          opacity,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
+        }}
+      />
+
+      {/* Refraction Top Edge Highlight */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent" />
+
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
 }
 
 interface Subscription {
@@ -64,7 +117,6 @@ export default function AdminPanel({
   const [registrySearch, setRegistrySearch] = useState("");
   const [waitlistSearch, setWaitlistSearch] = useState("");
   const [proSearch, setProSearch] = useState("");
-  const [mounted, setMounted] = useState(false);
 
   // Code Generator State
   const [codeInfo, setCodeInfo] = useState<ActiveCodeInfo | null>(initialCodeInfo);
@@ -80,7 +132,6 @@ export default function AdminPanel({
   const premiumCount = (subscriptions || []).filter(isActuallyPro).length;
 
   useEffect(() => {
-    setMounted(true);
     document.documentElement.classList.add('admin-theme');
     document.body.classList.add('admin-theme');
     return () => {
@@ -232,364 +283,395 @@ export default function AdminPanel({
   };
 
   return (
-    <div className="admin-theme min-h-screen bg-bg text-text-primary font-sans selection:bg-accent/20 selection:text-accent pb-20">
-      <header className="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border-default/50">
+    <div className="admin-theme min-h-screen bg-bg text-text-primary font-sans selection:bg-accent/20 selection:text-accent pb-24">
+      {/* Top Glass Header */}
+      <header className="sticky top-0 z-50 bg-bg/80 backdrop-blur-xl border-b border-border-default/60 shadow-xs">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link 
               href="/dashboard" 
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-bg-surface/50 border border-border-default/40 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-text-secondary hover:text-text-primary"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="w-px h-6 bg-border-default/50" />
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-accent" />
-              <h1 className="text-base font-semibold tracking-tight">Admin Console</h1>
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 bg-accent/10 rounded-lg text-accent">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <h1 className="text-sm font-semibold tracking-tight">Admin Console</h1>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                ONLINE
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center font-semibold text-sm">
+             <div className="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-xs shadow-sm">
                {ownerEmail[0].toUpperCase()}
              </div>
-             <span className="text-sm font-medium hidden sm:block text-text-secondary">{ownerEmail}</span>
+             <span className="text-xs font-semibold hidden sm:block text-text-secondary">{ownerEmail}</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-12">
-        {/* Stats Row */}
+      <main className="max-w-[1400px] mx-auto px-6 py-10 space-y-10">
+        {/* Bento Stats Row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+          <SpotlightCard className="flex flex-col justify-between h-44">
+             <div className="flex items-start justify-between">
+                <div className="p-3 bg-accent/10 text-accent rounded-2xl border border-accent/15">
                   <Users className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Active Nodes</span>
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  <Activity className="w-3 h-3" /> Node Pulse
+                </div>
              </div>
              <div>
-                <p className="text-4xl font-bold tracking-tight">{totalGmails}</p>
-                <p className="text-sm text-text-secondary mt-1">Total registered users</p>
+                <p className="text-4xl font-bold tracking-tight text-text-primary">{totalGmails}</p>
+                <p className="text-xs font-medium text-text-secondary mt-1">Total registered users</p>
              </div>
-          </div>
-          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+          </SpotlightCard>
+
+          <SpotlightCard className="flex flex-col justify-between h-44">
+             <div className="flex items-start justify-between">
+                <div className="p-3 bg-accent/10 text-accent rounded-2xl border border-accent/15">
                   <Crown className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">System Master</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary bg-bg/60 border border-border-default px-2 py-0.5 rounded-md">Master Node</span>
              </div>
              <div>
-                <p className="text-2xl font-bold tracking-tight truncate" title={ownerEmail}>{ownerEmail}</p>
-                <p className="text-sm text-text-secondary mt-1">Primary administrator</p>
+                <p className="text-xl font-bold tracking-tight truncate text-text-primary" title={ownerEmail}>{ownerEmail}</p>
+                <p className="text-xs font-medium text-text-secondary mt-1">Primary administrator account</p>
              </div>
-          </div>
-          <div className="bg-bg-surface border border-border-default rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+          </SpotlightCard>
+
+          <SpotlightCard className="flex flex-col justify-between h-44" spotlightColor="rgba(59, 130, 246, 0.12)">
+             <div className="flex items-start justify-between">
+                <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/15">
                   <Zap className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Elite Nodes</span>
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full">
+                  <Sparkles className="w-3 h-3 animate-spin" style={{ animationDuration: '6s' }} /> Elite Subscriptions
+                </div>
              </div>
              <div>
-                <p className="text-4xl font-bold tracking-tight">{premiumCount}</p>
-                <p className="text-sm text-text-secondary mt-1">Active Pro subscriptions</p>
+                <p className="text-4xl font-bold tracking-tight text-text-primary">{premiumCount}</p>
+                <p className="text-xs font-medium text-text-secondary mt-1">Active Pro access licenses</p>
              </div>
-          </div>
+          </SpotlightCard>
         </section>
 
-        {/* Access Code Generator */}
-        <section className="bg-bg-surface border border-border-default rounded-3xl p-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-12">
-            <div className="flex-1 space-y-8">
+        {/* Access Code Generator Section */}
+        <SpotlightCard className="p-8 md:p-10">
+          <div className="flex flex-col md:flex-row gap-10">
+            <div className="flex-1 space-y-6">
               <div>
-                <h2 className="text-xl font-bold flex items-center gap-2 mb-1">
-                  <Key className="w-5 h-5 text-accent" /> Access Code Generator
-                </h2>
-                <p className="text-sm text-text-secondary">Generate 8-character codes to grant users permanent Pro access.</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="p-2 bg-accent/10 text-accent rounded-xl">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-lg font-bold text-text-primary">Access Code Generator</h2>
+                </div>
+                <p className="text-xs text-text-secondary leading-relaxed">Generate 8-character single-use access codes to grant permanent Pro access to users.</p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex flex-col gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Current Code</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">Current Active Code</span>
                   {codeInfo?.code ? (
-                    <div className="flex items-center justify-between p-4 bg-bg border border-border-default rounded-xl">
+                    <div className="flex items-center justify-between p-4 bg-bg border border-border-default/80 rounded-2xl shadow-inner group">
                       <span className="font-mono text-2xl font-bold tracking-widest text-text-primary select-all">
                         {codeInfo.code}
                       </span>
                       <button
                         onClick={handleCopyCode}
-                        className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                        className="p-2.5 rounded-xl bg-bg-surface hover:bg-accent/10 hover:text-accent border border-border-default transition-all text-text-secondary active:scale-95"
+                        title="Copy code"
                       >
-                        {codeCopied ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+                        {codeCopied ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                       </button>
                     </div>
                   ) : (
-                    <div className="p-4 bg-bg border border-border-default border-dashed rounded-xl text-text-secondary text-sm flex items-center justify-center">
-                      No active code
+                    <div className="p-4 bg-bg/50 border border-border-default border-dashed rounded-2xl text-text-tertiary text-xs flex items-center justify-center">
+                      No active access code currently generated
                     </div>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-bg border border-border-default rounded-xl">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary block mb-2">Uses</span>
+                  <div className="p-4 bg-bg/60 border border-border-default/60 rounded-2xl">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary block mb-1">Redemptions</span>
                     <div className="flex items-end gap-1">
-                      <span className="text-2xl font-bold">{codeInfo?.usesCount ?? 0}</span>
-                      <span className="text-sm text-text-secondary mb-1">/ {codeInfo?.maxUses ?? 20}</span>
+                      <span className="text-xl font-bold">{codeInfo?.usesCount ?? 0}</span>
+                      <span className="text-xs text-text-tertiary mb-0.5">/ {codeInfo?.maxUses ?? 20} max</span>
                     </div>
-                    <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full mt-3 overflow-hidden">
+                    <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full mt-2.5 overflow-hidden">
                       <div 
-                        className="h-full bg-accent transition-all duration-500"
+                        className="h-full bg-accent transition-all duration-500 rounded-full"
                         style={{ width: `${Math.min(((codeInfo?.usesCount ?? 0) / (codeInfo?.maxUses ?? 20)) * 100, 100)}%` }}
                       />
                     </div>
                   </div>
-                  <div className="p-4 bg-bg border border-border-default rounded-xl">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary block mb-2">Expiry</span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Clock className="w-4 h-4 text-accent" />
-                      <span className="font-medium text-sm">{getCodeExpiryDisplay() ?? "—"}</span>
+                  <div className="p-4 bg-bg/60 border border-border-default/60 rounded-2xl">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary block mb-1">Time Limit</span>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Clock className="w-3.5 h-3.5 text-accent" />
+                      <span className="font-semibold text-xs">{getCodeExpiryDisplay() ?? "—"}</span>
                     </div>
                     {codeInfo?.expiresAt && (
-                      <p className="text-xs text-text-secondary mt-2">{new Date(codeInfo.expiresAt).toLocaleDateString()}</p>
+                      <p className="text-[10px] text-text-tertiary mt-1.5">{new Date(codeInfo.expiresAt).toLocaleDateString()}</p>
                     )}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col justify-between">
-              <div className="space-y-6">
+            <div className="flex-1 flex flex-col justify-between border-t md:border-t-0 md:border-l border-border-default/60 pt-6 md:pt-0 md:pl-10">
+              <div className="space-y-5">
                 <div className={cn(
-                  "p-4 rounded-xl border flex items-start gap-3",
+                  "p-4 rounded-2xl border flex items-start gap-3 transition-colors",
                   codeInfo?.canGenerate
-                    ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-950/30 dark:border-green-900/50 dark:text-green-400"
-                    : "bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/30 dark:border-amber-900/50 dark:text-amber-400"
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                    : "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400"
                 )}>
                   {codeInfo?.canGenerate ? (
-                    <Unlock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <Unlock className="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-500" />
                   ) : (
-                    <Lock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <Lock className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-500" />
                   )}
                   <div>
-                    <h3 className="font-semibold text-sm">
-                      {codeInfo?.canGenerate ? "Ready to Generate" : "Cooldown Active"}
+                    <h3 className="font-semibold text-xs">
+                      {codeInfo?.canGenerate ? "Ready for Generation" : "Cooldown Active"}
                     </h3>
-                    <p className="text-xs mt-1 opacity-90 leading-relaxed">
+                    <p className="text-[11px] mt-0.5 opacity-90 leading-relaxed">
                       {codeInfo?.canGenerate
-                        ? "No active cooldown. A new access code can be issued immediately."
-                        : `${codeInfo?.cooldownDaysLeft ?? 3} day(s) remaining before the next code can be generated.`
+                        ? "System clear. A new 8-character access token can be issued immediately."
+                        : `${codeInfo?.cooldownDaysLeft ?? 3} day(s) remaining before a new code can be generated.`
                       }
                     </p>
                   </div>
                 </div>
 
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
-                    Codes are 8-character alphanumeric
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
-                    Each code expires after 3 days
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-border-default" />
-                    Maximum 20 uses per code
-                  </li>
-                </ul>
+                <div className="space-y-2 text-xs text-text-secondary">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    Codes expire automatically after 3 days
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    Each code supports up to 20 unique redemptions
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    Generates instant Pro privilege upon input
+                  </div>
+                </div>
               </div>
 
               <button
                 onClick={handleGenerateCode}
                 disabled={isGenerating || !codeInfo?.canGenerate}
                 className={cn(
-                  "mt-6 w-full py-3.5 px-6 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2",
+                  "mt-6 w-full py-3.5 px-6 rounded-2xl font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-xs active:scale-[0.98]",
                   codeInfo?.canGenerate && !isGenerating
-                    ? "bg-accent text-white hover:bg-accent/90 active:scale-[0.98]"
-                    : "bg-black/5 dark:bg-white/5 text-text-tertiary cursor-not-allowed"
+                    ? "bg-accent text-white hover:bg-accent/90 shadow-accent/20 hover:shadow-md"
+                    : "bg-black/5 dark:bg-white/5 text-text-tertiary cursor-not-allowed border border-border-default/40"
                 )}
               >
                 {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
-                {isGenerating ? "Generating..." : "Generate New Code"}
+                {isGenerating ? "Generating Token..." : "Generate New Access Code"}
               </button>
             </div>
           </div>
-        </section>
+        </SpotlightCard>
 
-        {/* Waitlist & Pro Access */}
+        {/* Waitlist & Pro Access Bento Columns */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Waitlist */}
-          <div className="bg-bg-surface border border-border-default rounded-3xl p-6 shadow-sm flex flex-col h-[500px]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <ListChecks className="w-5 h-5 text-text-tertiary" /> Waitlist
-              </h2>
-              <span className="text-xs font-semibold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
-                {waitlistUsers.length} Users
+          {/* Waitlist Box */}
+          <SpotlightCard className="p-6 flex flex-col h-[480px]">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-text-tertiary/10 text-text-secondary rounded-xl">
+                  <ListChecks className="w-4 h-4" />
+                </div>
+                <h2 className="text-base font-bold text-text-primary">Waitlist Requests</h2>
+              </div>
+              <span className="text-[10px] font-bold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
+                {waitlistUsers.length} Pending
               </span>
             </div>
+
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
               <input
                 value={waitlistSearch}
                 onChange={(e) => setWaitlistSearch(e.target.value)}
-                placeholder="Search waitlist..."
-                className="w-full bg-bg border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+                placeholder="Search waitlist users..."
+                className="w-full bg-bg border border-border-default/80 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-accent transition-colors"
               />
             </div>
-            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
               {filteredWaitlist.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-sm">
-                  <Mail className="w-8 h-8 mb-2 opacity-50" />
-                  No users found
+                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-xs">
+                  <Mail className="w-7 h-7 mb-2 opacity-40" />
+                  No matching waitlist requests
                 </div>
               ) : (
                 filteredWaitlist.map(u => (
-                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg border border-border-default rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-border-default flex items-center justify-center text-xs font-bold text-text-secondary">
+                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg/60 border border-border-default/50 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-all hover:translate-x-0.5">
+                    <div className="w-7 h-7 rounded-lg bg-bg border border-border-default flex items-center justify-center text-[10px] font-bold text-text-secondary">
                       {u.email[0].toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{u.email}</p>
-                      <p className="text-xs text-text-tertiary">{new Date(u.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs font-medium truncate text-text-primary">{u.email}</p>
+                      <p className="text-[10px] text-text-tertiary">{new Date(u.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 ))
               )}
             </div>
-          </div>
+          </SpotlightCard>
 
-          {/* Pro Access List */}
-          <div className="bg-bg-surface border border-border-default rounded-3xl p-6 shadow-sm flex flex-col h-[500px]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-accent" /> Redemptions
-              </h2>
-              <span className="text-xs font-semibold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
-                {proAccessUsers.length} Users
+          {/* Pro Access List Box */}
+          <SpotlightCard className="p-6 flex flex-col h-[480px]" spotlightColor="rgba(59, 130, 246, 0.12)">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-blue-500/10 text-blue-500 rounded-xl">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <h2 className="text-base font-bold text-text-primary">Active Redemptions</h2>
+              </div>
+              <span className="text-[10px] font-bold bg-bg px-2.5 py-1 rounded-full border border-border-default text-text-secondary">
+                {proAccessUsers.length} Redeemed
               </span>
             </div>
+
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
               <input
                 value={proSearch}
                 onChange={(e) => setProSearch(e.target.value)}
                 placeholder="Search redemptions..."
-                className="w-full bg-bg border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+                className="w-full bg-bg border border-border-default/80 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-accent transition-colors"
               />
             </div>
-            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
               {filteredProAccess.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-sm">
-                  <Crown className="w-8 h-8 mb-2 opacity-50" />
-                  No redemptions yet
+                <div className="h-full flex flex-col items-center justify-center text-text-tertiary text-xs">
+                  <Crown className="w-7 h-7 mb-2 opacity-40" />
+                  No code redemptions recorded
                 </div>
               ) : (
                 filteredProAccess.map(u => (
-                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg border border-border-default rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center text-accent border border-accent/20">
-                      <Crown className="w-4 h-4" />
+                  <div key={u.id} className="flex items-center gap-3 p-3 bg-bg/60 border border-border-default/50 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-all hover:translate-x-0.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center">
+                      <Crown className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{u.email}</p>
-                      <p className="text-xs text-text-tertiary flex items-center gap-2">
+                      <p className="text-xs font-medium truncate text-text-primary">{u.email}</p>
+                      <p className="text-[10px] text-text-tertiary flex items-center gap-2">
                         <span className="font-mono bg-black/5 dark:bg-white/5 px-1 py-0.5 rounded border border-border-default">{u.code_used}</span>
                         {new Date(u.granted_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
                   </div>
                 ))
               )}
             </div>
-          </div>
+          </SpotlightCard>
         </section>
 
-        {/* Registry Table */}
-        <section className="space-y-6">
+        {/* User Registry Section */}
+        <section className="space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Database className="w-5 h-5 text-text-tertiary" /> Registry
-            </h2>
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-accent/10 text-accent rounded-xl">
+                <Database className="w-4 h-4" />
+              </div>
+              <h2 className="text-lg font-bold text-text-primary">User Registry</h2>
+            </div>
+            
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
                 <input
                   value={registrySearch}
                   onChange={(e) => setRegistrySearch(e.target.value)}
-                  placeholder="Search registry..."
-                  className="w-full bg-bg-surface border border-border-default rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-accent transition-colors shadow-sm"
+                  placeholder="Search user registry..."
+                  className="w-full bg-bg-surface border border-border-default/80 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-accent transition-colors shadow-xs"
                 />
               </div>
               <button
                 onClick={() => setIsAdding(!isAdding)}
-                className="bg-text-primary text-bg px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.98] whitespace-nowrap shadow-sm"
+                className="bg-accent text-white px-4 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-accent/90 transition-all active:scale-95 whitespace-nowrap shadow-xs"
               >
-                <Plus className="w-4 h-4" />
-                Add Node
+                <Plus className="w-3.5 h-3.5" />
+                Authorize Node
               </button>
             </div>
           </div>
 
           {isAdding && (
-            <form onSubmit={handleAddUser} className="bg-bg-surface border border-border-default p-6 rounded-2xl flex flex-col sm:flex-row gap-4 shadow-sm animate-in fade-in slide-in-from-top-2">
+            <form onSubmit={handleAddUser} className="bg-bg-surface border border-border-default p-5 rounded-2xl flex flex-col sm:flex-row gap-3 shadow-sm animate-in fade-in slide-in-from-top-2">
               <div className="flex-1 relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
                 <input 
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="Enter user email..."
-                  className="w-full bg-bg border border-border-default rounded-xl py-2 pl-11 pr-4 text-sm focus:outline-none focus:border-accent transition-colors"
+                  placeholder="Enter email address..."
+                  className="w-full bg-bg border border-border-default/80 rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:border-accent transition-colors"
                   required
                 />
               </div>
-              <button type="submit" className="bg-accent text-white px-6 py-2 rounded-xl font-medium text-sm hover:bg-accent/90 transition-colors">
-                Authorize
+              <button type="submit" className="bg-text-primary text-bg px-5 py-2 rounded-xl font-semibold text-xs hover:opacity-90 transition-opacity">
+                Authorize Access
               </button>
             </form>
           )}
 
-          <div className="bg-bg-surface border border-border-default rounded-3xl overflow-hidden shadow-sm">
+          <div className="bg-bg-surface border border-border-default/80 rounded-3xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-bg border-b border-border-default">
-                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Identity</th>
-                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Access Level</th>
-                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-right">Actions</th>
+                  <tr className="bg-bg/60 border-b border-border-default/60">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-text-secondary uppercase tracking-wider">User Identity</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold text-text-secondary uppercase tracking-wider">Tier</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold text-text-secondary uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold text-text-secondary uppercase tracking-wider text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border-default">
+                <tbody className="divide-y divide-border-default/40">
                   {filteredSubscriptions.map((s) => (
-                    <tr key={s.id} className="hover:bg-bg/50 transition-colors group">
+                    <tr key={s.id} className="hover:bg-bg/40 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-bg border border-border-default flex items-center justify-center font-semibold text-text-secondary text-sm">
+                          <div className="w-9 h-9 rounded-xl bg-bg border border-border-default/60 flex items-center justify-center font-bold text-text-secondary text-xs">
                             {s.email[0].toUpperCase()}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold">{s.email}</p>
-                            <p className="text-xs text-text-tertiary mt-0.5">Joined {new Date(s.created_at).toLocaleDateString()}</p>
+                            <p className="text-xs font-semibold text-text-primary">{s.email}</p>
+                            <p className="text-[10px] text-text-tertiary mt-0.5">Registered {new Date(s.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className={cn(
-                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border",
+                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border",
                           isActuallyPro(s) 
                             ? "bg-accent/10 border-accent/20 text-accent" 
-                            : "bg-bg border-border-default text-text-secondary"
+                            : "bg-bg/80 border-border-default/60 text-text-secondary"
                         )}>
                           {isActuallyPro(s) ? <Zap className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
                           {isActuallyPro(s) ? 'Pro Access' : 'Standard'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-sm text-text-secondary">
-                          <div className={cn("w-1.5 h-1.5 rounded-full", isActuallyPro(s) ? "bg-accent" : "bg-text-tertiary")} />
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                          <span className={cn("w-1.5 h-1.5 rounded-full", isActuallyPro(s) ? "bg-accent animate-pulse" : "bg-text-tertiary")} />
                           Active
                         </div>
                       </td>
@@ -598,18 +680,18 @@ export default function AdminPanel({
                           <button 
                             onClick={() => handleTogglePro(s.email, s.plan)}
                             className={cn(
-                              "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border",
+                              "px-3 py-1.5 rounded-xl text-xs font-medium transition-all border active:scale-95",
                               s.plan === 'pro'
                                 ? "bg-bg border-border-default text-text-secondary hover:text-text-primary"
                                 : "bg-accent/10 border-accent/20 text-accent hover:bg-accent hover:text-white"
                             )}
                           >
-                            {s.plan === 'pro' ? 'Revoke' : 'Upgrade'}
+                            {s.plan === 'pro' ? 'Revoke Pro' : 'Grant Pro'}
                           </button>
                           <button 
                             onClick={() => handleDeleteUser(s.email)}
                             className="p-1.5 text-text-tertiary hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10"
-                            title="Remove user"
+                            title="Remove account"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -620,8 +702,8 @@ export default function AdminPanel({
                 </tbody>
               </table>
             </div>
-            <div className="px-6 py-4 bg-bg border-t border-border-default flex items-center justify-between">
-              <span className="text-xs text-text-secondary font-medium">{filteredSubscriptions.length} nodes total</span>
+            <div className="px-6 py-3.5 bg-bg/40 border-t border-border-default/60 flex items-center justify-between">
+              <span className="text-[11px] text-text-secondary font-medium">{filteredSubscriptions.length} registered accounts</span>
             </div>
           </div>
         </section>

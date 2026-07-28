@@ -14,6 +14,15 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.2",
+    date: "2026-07-28",
+    summary: "Spotlight Refraction & High-Agency Bento Cards",
+    changes: [
+      { type: "IMPROVED", description: "Added SpotlightCard component with cursor-tracking radial gradients and top-edge refraction" },
+      { type: "NEW", description: "Integrated custom generated texture background asset for admin cards" },
+    ],
+  },
+  {
     version: "1.4.1",
     date: "2026-07-28",
     summary: "Admin Panel Redesign & Slop Removal",
