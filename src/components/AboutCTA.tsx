@@ -7,10 +7,10 @@ export default function AboutCTA() {
   return (
     <section className="py-20 bg-transparent overflow-hidden">
       <div className="max-w-[1240px] mx-auto px-8">
-        <div className="relative rounded-[32px] bg-stone-900/40 dark:bg-stone-900/30 backdrop-blur-xl p-10 sm:p-14 border border-stone-800/30 dark:border-white/10 shadow-xl overflow-hidden group">
+        <div className="relative rounded-[32px] bg-black dark:bg-black p-10 sm:p-14 border border-zinc-800 shadow-2xl shadow-black/40 overflow-hidden group">
           {/* Subtle Background Radial Accent */}
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-75" />
-          <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-75" />
+          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-100" />
+          <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-80 h-80 bg-orange-500/15 rounded-full blur-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-100" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="space-y-4 max-w-[640px]">

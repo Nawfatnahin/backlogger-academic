@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck, Sparkles, Activity
+  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck, Sparkles, Activity, XCircle, Ban
 } from "lucide-react";
-import { toggleProStatus, deleteSubscription, generateAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList } from "./actions";
+import { toggleProStatus, deleteSubscription, generateAccessCode, cancelAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList } from "./actions";
 import { toast } from "sonner";
 import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
@@ -121,7 +121,10 @@ export default function AdminPanel({
   // Code Generator State
   const [codeInfo, setCodeInfo] = useState<ActiveCodeInfo | null>(initialCodeInfo);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  const [durationDays, setDurationDays] = useState<number>(3);
+  const [maxUses, setMaxUses] = useState<number>(20);
 
   // Waitlist & Pro Access State
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>(initialWaitlist || []);
@@ -237,22 +240,20 @@ export default function AdminPanel({
   const handleGenerateCode = async () => {
     setIsGenerating(true);
     try {
-      const result = await generateAccessCode();
+      const result = await generateAccessCode(durationDays, maxUses);
       if (result.success && result.code) {
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 3);
+        expiresAt.setDate(expiresAt.getDate() + durationDays);
         setCodeInfo({
           code: result.code,
           usesCount: 0,
-          maxUses: 20,
+          maxUses: maxUses,
           expiresAt: expiresAt.toISOString(),
           createdAt: new Date().toISOString(),
-          cooldownDaysLeft: 3,
-          canGenerate: false,
+          cooldownDaysLeft: 0,
+          canGenerate: true,
         });
-        toast.success("New access code generated.");
-      } else if (result.cooldownDaysLeft) {
-        toast.error(`Cooldown active. ${result.cooldownDaysLeft} day(s) remaining.`);
+        toast.success(`New access code generated (${durationDays} days, ${maxUses} max uses).`);
       } else {
         toast.error(result.error || "Failed to generate code.");
       }
@@ -260,6 +261,32 @@ export default function AdminPanel({
       toast.error("Code generation failed.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleCancelCode = async () => {
+    if (!window.confirm("Are you sure you want to cancel the active access code?")) return;
+    setIsCancelling(true);
+    try {
+      const res = await cancelAccessCode();
+      if (res.success) {
+        setCodeInfo({
+          code: undefined,
+          usesCount: 0,
+          maxUses: 20,
+          expiresAt: undefined,
+          createdAt: undefined,
+          cooldownDaysLeft: 0,
+          canGenerate: true,
+        });
+        toast.success("Active access code cancelled. You can generate a new code anytime.");
+      } else {
+        toast.error(res.error || "Failed to cancel access code.");
+      }
+    } catch {
+      toast.error("Failed to cancel access code.");
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -316,9 +343,7 @@ export default function AdminPanel({
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <SpotlightCard className="flex flex-col justify-between h-52">
              <div className="flex items-start justify-between">
-                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
-                  <img src="/icon_active_nodes.png" alt="Active Nodes Icon" className="w-full h-full object-cover rounded-xl" />
-                </div>
+                <Users className="w-10 h-10 text-emerald-500 stroke-[2.2] drop-shadow-sm" />
                 <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                   <Activity className="w-3.5 h-3.5" /> Node Pulse
                 </div>
@@ -331,9 +356,7 @@ export default function AdminPanel({
 
           <SpotlightCard className="flex flex-col justify-between h-52">
              <div className="flex items-start justify-between">
-                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
-                  <img src="/icon_system_master.png" alt="System Master Icon" className="w-full h-full object-cover rounded-xl" />
-                </div>
+                <ShieldCheck className="w-10 h-10 text-amber-500 stroke-[2.2] drop-shadow-sm" />
                 <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary bg-bg/80 border border-border-default px-2.5 py-1 rounded-md">Master Node</span>
              </div>
              <div>
@@ -344,9 +367,7 @@ export default function AdminPanel({
 
           <SpotlightCard className="flex flex-col justify-between h-52" spotlightColor="rgba(59, 130, 246, 0.14)">
              <div className="flex items-start justify-between">
-                <div className="w-14 h-14 rounded-2xl border border-border-default/80 bg-bg/80 p-1.5 shadow-sm overflow-hidden flex items-center justify-center">
-                  <img src="/icon_elite_nodes.png" alt="Elite Nodes Icon" className="w-full h-full object-cover rounded-xl" />
-                </div>
+                <Crown className="w-10 h-10 text-blue-500 stroke-[2.2] drop-shadow-sm" />
                 <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">
                   <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} /> Elite Subscriptions
                 </div>
@@ -380,13 +401,24 @@ export default function AdminPanel({
                       <span className="font-mono text-3xl font-extrabold tracking-widest text-text-primary select-all">
                         {codeInfo.code}
                       </span>
-                      <button
-                        onClick={handleCopyCode}
-                        className="p-3 rounded-xl bg-bg-surface hover:bg-accent/10 hover:text-accent border border-border-default transition-all text-text-secondary active:scale-95"
-                        title="Copy code"
-                      >
-                        {codeCopied ? <CheckCircle2 className="w-6 h-6 text-emerald-500" /> : <Copy className="w-5 h-5" />}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleCopyCode}
+                          className="p-3 rounded-xl bg-bg-surface hover:bg-accent/10 hover:text-accent border border-border-default transition-all text-text-secondary active:scale-95"
+                          title="Copy code"
+                        >
+                          {codeCopied ? <CheckCircle2 className="w-6 h-6 text-emerald-500" /> : <Copy className="w-5 h-5" />}
+                        </button>
+                        <button
+                          onClick={handleCancelCode}
+                          disabled={isCancelling}
+                          className="p-3 rounded-xl bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold"
+                          title="Cancel active code"
+                        >
+                          {isCancelling ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Ban className="w-4 h-4" />}
+                          <span className="hidden sm:inline">Cancel Code</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="p-4 bg-bg/50 border border-border-default border-dashed rounded-2xl text-text-tertiary text-sm flex items-center justify-center font-medium">
@@ -452,31 +484,56 @@ export default function AdminPanel({
                 <div className="space-y-2.5 text-sm font-medium text-text-secondary">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-accent" />
-                    Codes expire automatically after 3 days
+                    Customizable time limits (in days)
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-accent" />
-                    Each code supports up to 20 unique redemptions
+                    Configurable redemptions limit (up to 1000 uses)
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-accent" />
-                    Generates instant Pro privilege upon input
+                    Instant code cancellation & override capability
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-wider text-text-tertiary block mb-1">Duration (Days)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={3650}
+                      value={durationDays}
+                      onChange={(e) => setDurationDays(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-bg font-bold text-sm text-text-primary outline-none focus:border-accent"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-wider text-text-tertiary block mb-1">Pro Access Limit (Up to 1000)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={maxUses}
+                      onChange={(e) => setMaxUses(Math.max(1, Math.min(1000, parseInt(e.target.value) || 1)))}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-bg font-bold text-sm text-text-primary outline-none focus:border-accent"
+                    />
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={handleGenerateCode}
-                disabled={isGenerating || !codeInfo?.canGenerate}
+                disabled={isGenerating}
                 className={cn(
                   "mt-6 w-full py-4 px-6 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2.5 shadow-xs active:scale-[0.98]",
-                  codeInfo?.canGenerate && !isGenerating
+                  !isGenerating
                     ? "bg-accent text-white hover:bg-accent/90 shadow-accent/20 hover:shadow-md"
                     : "bg-black/5 dark:bg-white/5 text-text-tertiary cursor-not-allowed border border-border-default/40"
                 )}
               >
                 {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Key className="w-5 h-5" />}
-                {isGenerating ? "Generating Token..." : "Generate New Access Code"}
+                {isGenerating ? "Generating Code..." : "Generate Access Code"}
               </button>
             </div>
           </div>

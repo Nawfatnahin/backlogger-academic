@@ -197,7 +197,7 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Privacy first */}
-              <div className="bg-white/90 dark:bg-black/60 p-8 rounded-none border border-[#a67c52]/30 shadow-md">
+              <div className="bg-bg-surface dark:bg-bg-elevated p-8 rounded-2xl border border-border-strong dark:border-white/10 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/40">
                 <h3 className="text-[19px] font-semibold text-gray-900 dark:text-white">
                   Privacy first
                 </h3>
@@ -208,7 +208,7 @@ export default function AboutPage() {
               </div>
 
               {/* Speed matters */}
-              <div className="bg-white/90 dark:bg-black/60 p-8 rounded-none border border-[#a67c52]/30 shadow-md">
+              <div className="bg-bg-surface dark:bg-bg-elevated p-8 rounded-2xl border border-border-strong dark:border-white/10 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/40">
                 <h3 className="text-[19px] font-semibold text-gray-900 dark:text-white">
                   Speed matters
                 </h3>
@@ -219,7 +219,7 @@ export default function AboutPage() {
               </div>
 
               {/* Student focused */}
-              <div className="bg-white/90 dark:bg-black/60 p-8 rounded-none border border-[#a67c52]/30 shadow-md">
+              <div className="bg-bg-surface dark:bg-bg-elevated p-8 rounded-2xl border border-border-strong dark:border-white/10 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/40">
                 <h3 className="text-[19px] font-semibold text-gray-900 dark:text-white">
                   Student focused
                 </h3>

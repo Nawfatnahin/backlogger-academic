@@ -74,26 +74,26 @@ export default function Navigation() {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#8B4513"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-8 h-8 transition-transform group-hover:scale-110 text-[#8B4513]"
+              className="w-8 h-8 transition-transform group-hover:scale-110 text-[#8B4513] dark:text-white"
             >
               <path d="M12 12m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
               <path d="M18.816 13.58c2.292 2.138 3.546 4 3.092 4.9c-.745 1.46 -5.783 -.259 -11.255 -3.838c-5.47 -3.579 -9.304 -7.664 -8.56 -9.123c.464 -.91 2.926 -.444 5.803 .805" />
             </svg>
-            <span className="text-xl font-normal text-ink">Scholar</span>
-            <span className="text-xl font-bold text-[#8B4513]">Atlas</span>
+            <span className="text-xl font-normal text-ink dark:text-white">Scholar</span>
+            <span className="text-xl font-bold text-[#8B4513] dark:text-white">Atlas</span>
           </Link>
         ) : (
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-[#92400e] dark:bg-[#833AB4] flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
-              <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white">
+            <div className="w-8 h-8 rounded-lg bg-[#92400e] dark:bg-white flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+              <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white dark:fill-black">
                 <path d="M10 2L3 7v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1V7l-7-5z" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-ink">Scholar Atlas</span>
+            <span className="text-xl font-bold text-ink dark:text-white">Scholar Atlas</span>
           </Link>
         )}
 

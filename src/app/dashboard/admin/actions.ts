@@ -111,7 +111,10 @@ function generateCode(): string {
   return code;
 }
 
-export async function generateAccessCode(): Promise<{ success: boolean; code?: string; error?: string; cooldownDaysLeft?: number }> {
+export async function generateAccessCode(
+  durationDays: number = 3,
+  maxUses: number = 20
+): Promise<{ success: boolean; code?: string; error?: string; cooldownDaysLeft?: number }> {
   try {
     const supabase = await createClient();
     
@@ -120,25 +123,8 @@ export async function generateAccessCode(): Promise<{ success: boolean; code?: s
       return { success: false, error: 'Unauthorized' };
     }
 
-    // Check if any code was generated in the last 3 days
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-
-    const { data: recentCodes } = await supabase
-      .from('access_codes')
-      .select('created_at')
-      .gte('created_at', threeDaysAgo.toISOString())
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (recentCodes && recentCodes.length > 0) {
-      const lastCreated = new Date(recentCodes[0].created_at);
-      const nextAllowed = new Date(lastCreated);
-      nextAllowed.setDate(nextAllowed.getDate() + 3);
-      const msLeft = nextAllowed.getTime() - Date.now();
-      const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
-      return { success: false, error: 'Cooldown active', cooldownDaysLeft: daysLeft };
-    }
+    const safeDays = Math.max(1, Math.min(3650, durationDays || 3));
+    const safeMaxUses = Math.max(1, Math.min(1000, maxUses || 20));
 
     // Deactivate all old codes
     await supabase.from('access_codes').update({ is_active: false }).eq('is_active', true);
@@ -146,12 +132,12 @@ export async function generateAccessCode(): Promise<{ success: boolean; code?: s
     // Generate new code
     const code = generateCode();
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 3);
+    expiresAt.setDate(expiresAt.getDate() + safeDays);
 
     const { error } = await supabase.from('access_codes').insert({
       code,
       uses_count: 0,
-      max_uses: 20,
+      max_uses: safeMaxUses,
       expires_at: expiresAt.toISOString(),
       is_active: true,
     });
@@ -163,6 +149,31 @@ export async function generateAccessCode(): Promise<{ success: boolean; code?: s
 
     revalidatePath('/dashboard/admin');
     return { success: true, code };
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMessage };
+  }
+}
+
+export async function cancelAccessCode(): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const { error } = await supabase
+      .from('access_codes')
+      .update({ is_active: false })
+      .eq('is_active', true);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath('/dashboard/admin');
+    return { success: true };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     return { success: false, error: errorMessage };

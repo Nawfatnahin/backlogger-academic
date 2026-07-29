@@ -372,7 +372,7 @@ export default function Pricing() {
                 </ul>
                 <Link 
                   href={user ? "/dashboard" : "/signup"} 
-                  className="block text-center w-full bg-white border border-border-strong text-ink font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:bg-bg hover:border-black/20"
+                  className="block text-center w-full bg-white dark:bg-bg-elevated border border-border-strong dark:border-white/10 text-ink dark:text-white font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:bg-bg dark:hover:bg-bg-surface hover:border-black/20 dark:hover:border-white/20"
                 >
                   {user ? "Go to Dashboard" : "Get started free"}
                 </Link>
@@ -421,7 +421,7 @@ export default function Pricing() {
                 // Guest: Show "Get Started Free" → /signup
                 <Link
                   href="/signup"
-                  className="block text-center w-full bg-white text-stone-900 font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                  className="block text-center w-full bg-white dark:bg-accent text-stone-900 dark:text-white font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg dark:hover:bg-accent/90"
                 >
                   Get Started Free
                 </Link>
@@ -429,7 +429,7 @@ export default function Pricing() {
                 // Logged in, not pro: Show "Join Wishlist" → popup
                 <button
                   onClick={() => setIsWishlistOpen(true)}
-                  className="block text-center w-full bg-white text-stone-900 font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                  className="block text-center w-full bg-white dark:bg-accent text-stone-900 dark:text-white font-body text-[14px] font-bold p-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg dark:hover:bg-accent/90"
                 >
                   Join Wishlist
                 </button>
