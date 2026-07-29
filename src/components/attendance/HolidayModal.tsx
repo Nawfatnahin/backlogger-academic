@@ -106,6 +106,14 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({
               </button>
             </div>
 
+            <div className="px-10 pt-8 -mb-2">
+              <p className="text-xs font-medium text-ink-3 leading-relaxed">
+                {activeTab === 'global' 
+                  ? 'Global holidays apply to all courses across your schedule. Any class scheduled on these dates will be automatically marked as cancelled and will not affect your attendance.'
+                  : 'Subject cancellations are specific to a single course (e.g., a professor is absent). Classes for other subjects on this date will proceed as normal.'}
+              </p>
+            </div>
+
             <div className="flex-1 overflow-y-auto p-10 space-y-10">
               <form onSubmit={handleSubmit} className="space-y-6 p-8 bg-white/60 rounded-[32px] border border-border-strong">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

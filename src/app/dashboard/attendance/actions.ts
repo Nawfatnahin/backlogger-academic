@@ -345,14 +345,32 @@ export async function updateSubject(id: string, data: any) {
     const supabase = await createClient();
     const user = await getAuthenticatedUser(supabase);
 
+    const { pastRecords, ...subjectData } = data;
+
     const { error } = await supabase
       .from('subjects')
-      .update(data)
+      .update(subjectData)
       .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {
       return { success: false, error: `DATABASE_ERROR: ${error.message}` };
+    }
+
+    if (pastRecords && Array.isArray(pastRecords)) {
+      // Delete old records
+      await supabase.from('attendance_records').delete().eq('subject_id', id).eq('user_id', user.id);
+      
+      if (pastRecords.length > 0) {
+        const recordsToInsert = pastRecords.map((r: any) => ({
+          subject_id: id,
+          user_id: user.id,
+          class_date: r.classDate,
+          absence_type: r.absenceType,
+          note: 'Re-initialized historical attendance'
+        }));
+        await supabase.from('attendance_records').insert(recordsToInsert);
+      }
     }
     
     revalidatePath('/dashboard/attendance');

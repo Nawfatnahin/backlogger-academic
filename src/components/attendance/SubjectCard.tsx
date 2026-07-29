@@ -167,7 +167,7 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({
             <div>
               <h3 className="text-xl font-bold text-text-primary">{subject.name}</h3>
               {subject.course_code && (
-                <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">{subject.course_code}</span>
+                <span className="inline-block mt-1 text-[10px] font-black text-text-secondary uppercase tracking-widest bg-bg-surface px-2 py-0.5 rounded-md border border-border-strong dark:bg-bg-elevated">{subject.course_code}</span>
               )}
             </div>
           </div>

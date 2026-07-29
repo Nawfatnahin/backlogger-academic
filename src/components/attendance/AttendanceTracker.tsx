@@ -75,7 +75,8 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
     semesterStartDate: format(new Date(), 'yyyy-MM-dd'),
     totalWeeks: 15,
   });
-  const [attendedPastClasses, setAttendedPastClasses] = useState<number>(0);
+  const [attendedPastClasses, setAttendedPastClasses] = useState<number | ''>('');
+  const [cancelledPastClasses, setCancelledPastClasses] = useState<number | ''>('');
 
   const subjectsWithStats = useMemo(() => {
     return initialSubjects.map(subject => {
@@ -114,6 +115,30 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
     try {
       if (editingSubject) {
         console.log('[JARVIS]: Dispatching subject update to server...');
+        
+        let pastRecords = undefined;
+        if (attendedPastClasses !== '' || cancelledPastClasses !== '') {
+          pastRecords = [] as Array<{ classDate: string; absenceType: 'present' | 'unexcused' | 'cancelled' }>;
+          const pastClassDates = getPastClassDates(formData.semesterStartDate, new Date(), formData.classDays);
+          if (pastClassDates.length > 0) {
+            pastClassDates.sort();
+            const attendedCount = attendedPastClasses === '' ? 0 : (attendedPastClasses as number);
+            const cancelledCount = cancelledPastClasses === '' ? 0 : (cancelledPastClasses as number);
+            for (let i = 0; i < pastClassDates.length; i++) {
+              let type: 'present' | 'unexcused' | 'cancelled' = 'unexcused';
+              if (i < cancelledCount) {
+                type = 'cancelled';
+              } else if (i < cancelledCount + attendedCount) {
+                type = 'present';
+              }
+              pastRecords.push({
+                classDate: pastClassDates[i],
+                absenceType: type
+              });
+            }
+          }
+        }
+
         const res = await updateSubject(editingSubject.id, {
           name: formData.name,
           course_code: formData.courseCode ? String(formData.courseCode).trim() : null,
@@ -121,7 +146,8 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
           personal_target: Number(formData.personalTarget),
           schedule_days: formData.classDays,
           semester_start_date: formData.semesterStartDate,
-          total_classes_planned: Number(formData.totalWeeks) * formData.classDays.length
+          total_classes_planned: Number(formData.totalWeeks) * formData.classDays.length,
+          pastRecords
         });
 
         if (res.success) {
@@ -135,7 +161,8 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
             semesterStartDate: format(new Date(), 'yyyy-MM-dd'),
             totalWeeks: 15,
           });
-          setAttendedPastClasses(0);
+          setAttendedPastClasses('');
+          setCancelledPastClasses('');
           toast.success("Subject settings updated with precision, Sir.");
         } else {
           toast.error(`Update Failed: ${res.error}`);
@@ -144,16 +171,24 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
         console.log('[JARVIS]: Dispatching subject configuration to server...');
         
         // Generate past records if starting in the past
-        const pastRecords: Array<{ classDate: string; absenceType: 'present' | 'unexcused' }> = [];
+        const pastRecords: Array<{ classDate: string; absenceType: 'present' | 'unexcused' | 'cancelled' }> = [];
         const pastClassDates = getPastClassDates(formData.semesterStartDate, new Date(), formData.classDays);
         if (pastClassDates.length > 0) {
           // Sort chronologically
           pastClassDates.sort();
-          // First N are present, remaining are unexcused
+          // First N are cancelled, next M are present, remaining are unexcused
+          const attendedCount = attendedPastClasses === '' ? 0 : attendedPastClasses;
+          const cancelledCount = cancelledPastClasses === '' ? 0 : cancelledPastClasses;
           for (let i = 0; i < pastClassDates.length; i++) {
+            let type: 'present' | 'unexcused' | 'cancelled' = 'unexcused';
+            if (i < cancelledCount) {
+              type = 'cancelled';
+            } else if (i < cancelledCount + attendedCount) {
+              type = 'present';
+            }
             pastRecords.push({
               classDate: pastClassDates[i],
-              absenceType: i < attendedPastClasses ? 'present' : 'unexcused'
+              absenceType: type
             });
           }
         }
@@ -180,7 +215,8 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
             semesterStartDate: format(new Date(), 'yyyy-MM-dd'),
             totalWeeks: 15,
           });
-          setAttendedPastClasses(0);
+          setAttendedPastClasses('');
+          setCancelledPastClasses('');
           toast.success("Academic track initialized with absolute precision, Sir.");
         } else {
           console.error('[JARVIS]: Server Action reported failure:', res.error);
@@ -205,7 +241,8 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
       semesterStartDate: subject.semester_start_date || format(new Date(), 'yyyy-MM-dd'),
       totalWeeks: Math.round((subject.total_classes_planned || 0) / (subject.schedule_days?.length || 1)) || 15,
     });
-    setAttendedPastClasses(0);
+    setAttendedPastClasses('');
+    setCancelledPastClasses('');
   };
 
   return (
@@ -322,17 +359,17 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
             <div className="p-5 sm:p-10 space-y-6 sm:space-y-8 overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest flex items-center gap-2"><Info className="w-3 h-3" /> Subject Name</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest flex items-center gap-2"><Info className="w-3 h-3" /> Subject Name</label>
                   <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="e.g. Data Structures" className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-elevated" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest flex items-center gap-2"><Hash className="w-3 h-3" /> Course Code</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest flex items-center gap-2"><Hash className="w-3 h-3" /> Course Code</label>
                   <input type="text" value={formData.courseCode} onChange={(e) => setFormData({...formData, courseCode: e.target.value})} placeholder="Optional" className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-elevated" />
                 </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest flex items-center gap-2"><Calendar className="w-3 h-3" /> Active Schedule Days</label>
+                <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest flex items-center gap-2"><Calendar className="w-3 h-3" /> Active Schedule Days</label>
                 <div className="flex flex-wrap gap-2">
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
                     <button key={day} type="button" onClick={() => {
@@ -345,28 +382,28 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
                 <div className="space-y-2 col-span-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest flex items-center gap-2"><Layout className="w-3 h-3" /> Target Attendance %</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest flex items-center gap-2"><Layout className="w-3 h-3" /> Target Attendance %</label>
                   <input type="number" value={formData.personalTarget} onChange={(e) => setFormData({...formData, personalTarget: parseFloat(e.target.value)})} placeholder="75" className="w-full px-4 py-3.5 rounded-xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-elevated" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">Total Planned</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Total Planned</label>
                   <input type="number" value={formData.totalWeeks * formData.classDays.length} readOnly className="w-full px-4 py-3.5 rounded-xl border-2 border-border-strong bg-bg-surface font-bold text-text-tertiary cursor-not-allowed dark:bg-bg-elevated dark:opacity-50" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">Start Date</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Start Date</label>
                   <input type="date" value={formData.semesterStartDate} onChange={(e) => setFormData({...formData, semesterStartDate: e.target.value})} className="w-full px-4 py-3.5 rounded-xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-elevated" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">Semester Duration (Weeks)</label>
+                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Semester Duration (Weeks)</label>
                   <input type="number" value={formData.totalWeeks} onChange={(e) => setFormData({...formData, totalWeeks: parseInt(e.target.value)})} className="w-full px-4 py-3.5 rounded-xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-elevated" required />
                 </div>
               </div>
 
               {/* Historical Class Input */}
-              {!editingSubject && pastClassesCount > 0 && (
+              {pastClassesCount > 0 && (
                 <div className="p-6 rounded-3xl bg-amber-50 border border-amber-200 dark:bg-amber-950/10 dark:border-amber-900/20 space-y-4 animate-in slide-in-from-top-4 duration-300">
                   <div className="flex gap-3">
                     <AlertCircle className="w-5 h-5 text-amber-600 dark:text-[#C9831A] shrink-0 mt-0.5" />
@@ -378,16 +415,49 @@ export function AttendanceTracker({ initialSubjects, initialHolidays }: Attendan
                       </p>
                     </div>
                   </div>
-                  <div className="space-y-2 max-w-xs">
-                    <label className="text-[10px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-widest">How many did you attend?</label>
-                    <input 
-                      type="number" 
-                      min={0} 
-                      max={pastClassesCount} 
-                      value={attendedPastClasses} 
-                      onChange={(e) => setAttendedPastClasses(Math.min(pastClassesCount, Math.max(0, parseInt(e.target.value) || 0)))}
-                      className="w-full px-4 py-3.5 rounded-xl border-2 border-amber-300 bg-white font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-zinc-900 dark:border-zinc-800" 
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-widest">Classes Attended</label>
+                      <input 
+                        type="number" 
+                        min={0} 
+                        max={pastClassesCount - (cancelledPastClasses || 0)} 
+                        value={attendedPastClasses} 
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === '') {
+                            setAttendedPastClasses('');
+                          } else {
+                            const parsed = parseInt(val);
+                            if (!isNaN(parsed)) {
+                              setAttendedPastClasses(Math.min(pastClassesCount - (cancelledPastClasses || 0), Math.max(0, parsed)));
+                            }
+                          }
+                        }}
+                        className="w-full px-4 py-3.5 rounded-xl border-2 border-amber-300 bg-white font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-zinc-900 dark:border-zinc-800" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-widest">Cancelled/Holidays</label>
+                      <input 
+                        type="number" 
+                        min={0} 
+                        max={pastClassesCount - (attendedPastClasses || 0)} 
+                        value={cancelledPastClasses} 
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === '') {
+                            setCancelledPastClasses('');
+                          } else {
+                            const parsed = parseInt(val);
+                            if (!isNaN(parsed)) {
+                              setCancelledPastClasses(Math.min(pastClassesCount - (attendedPastClasses || 0), Math.max(0, parsed)));
+                            }
+                          }
+                        }}
+                        className="w-full px-4 py-3.5 rounded-xl border-2 border-amber-300 bg-white font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-zinc-900 dark:border-zinc-800" 
+                      />
+                    </div>
                   </div>
                 </div>
               )}

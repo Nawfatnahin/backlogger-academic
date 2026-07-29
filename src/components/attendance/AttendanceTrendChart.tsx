@@ -90,7 +90,7 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({
           />
           <ReferenceLine y={threshold} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Req', position: 'insideLeft', fill: '#ef4444', fontSize: 10 }} />
           {target && (
-            <ReferenceLine y={target} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: 'Target', position: 'insideLeft', fill: '#f59e0b', fontSize: 10 }} />
+            <ReferenceLine y={target} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: 'Target', position: 'insideRight', fill: '#f59e0b', fontSize: 10 }} />
           )}
           <Line 
             type="monotone" 
