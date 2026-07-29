@@ -2,6 +2,13 @@
 All notable changes to Scholar Atlas are documented here.
 Format: [version] — YYYY-MM-DD
 
+## [1.4.5] — 2026-07-29
+
+### Added
+- **About CTA Section**: Added responsive AboutCTA section after Pricing on the homepage directing visitors to learn about the platform's mission and team on `/about`.
+
+---
+
 ## [1.4.4] — 2026-07-28
 
 ### Added

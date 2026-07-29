@@ -4,6 +4,7 @@ import SocialProof from "@/components/SocialProof";
 import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
+import AboutCTA from "@/components/AboutCTA";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <Features />
         <HowItWorks />
         <Pricing />
+        <AboutCTA />
       </main>
       <Footer />
     </>

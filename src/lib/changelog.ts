@@ -14,6 +14,14 @@ export interface VersionEntry {
 
 export const CHANGELOG: VersionEntry[] = [
   {
+    version: "1.4.5",
+    date: "2026-07-29",
+    summary: "About Section Call-to-Action Integration",
+    changes: [
+      { type: "NEW", description: "Added AboutCTA section after Pricing on homepage to guide users interested in learning about Scholar Atlas to the About page" },
+    ],
+  },
+  {
     version: "1.4.4",
     date: "2026-07-28",
     summary: "Bespoke 3D Glassmorphic Stats Icons Integration",
