@@ -88,11 +88,6 @@ export default function Navigation() {
           </Link>
         ) : (
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-[#92400e] dark:bg-white flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
-              <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white dark:fill-black">
-                <path d="M10 2L3 7v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1V7l-7-5z" />
-              </svg>
-            </div>
             <span className="text-xl font-bold text-ink dark:text-white">Scholar Atlas</span>
           </Link>
         )}
