@@ -171,7 +171,6 @@ export function TaskTracker({ initialTasks, subjects }: { initialTasks: Task[], 
                 className="w-full px-5 py-3.5 rounded-2xl border-2 border-border-strong focus:outline-none focus:border-accent transition-all font-bold bg-bg-base text-text-primary dark:bg-bg-surface"
               />
             </div>
-            </div>
           </div>
 
           <div className="mt-8 space-y-4">
