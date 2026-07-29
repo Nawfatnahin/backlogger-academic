@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 export default function FeedbackSection() {
   const { user } = useSubscription();
-  const [email, setEmail] = useState(user?.email || "");
   const [category, setCategory] = useState<"bug" | "feature" | "feedback">("bug");
   const [message, setMessage] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -16,14 +15,15 @@ export default function FeedbackSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !message.trim()) {
-      toast.error("Please fill in both your email and message, Sir.");
+    const activeEmail = user?.email || "anonymous@scholar-atlas.com";
+    if (!message.trim()) {
+      toast.error("Please enter your message, Sir.");
       return;
     }
 
     setIsPending(true);
     try {
-      const res = await submitFeedback(email, category, message);
+      const res = await submitFeedback(activeEmail, category, message);
       if (res.success) {
         toast.success("Thank you! Your feedback has been sent directly to the development team.");
         setIsSubmitted(true);
@@ -51,7 +51,7 @@ export default function FeedbackSection() {
               Report Bugs & Request Features
             </h2>
             <p className="text-[15px] sm:text-[16px] text-gray-600 dark:text-gray-300 max-w-xl mx-auto leading-relaxed font-medium">
-              Faced a problem, found a bug, or have an idea for a new feature? Tell us about it — your feedback goes directly to our admin team.
+              Faced a problem, found a bug or have an idea for a new feature? Tell us about it. Your feedback goes directly to our admin team.
             </p>
           </div>
 
@@ -119,21 +119,6 @@ export default function FeedbackSection() {
                   </div>
                 </div>
 
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
-                    Your Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="student@university.edu"
-                    required
-                    className="w-full px-5 py-3.5 rounded-2xl border-2 border-border-strong bg-bg-base font-bold text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-surface"
-                  />
-                </div>
-
                 {/* Message Field */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
@@ -143,7 +128,7 @@ export default function FeedbackSection() {
                     rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Describe the bug you encountered, the page it happened on, or the feature you'd love to see..."
+                    placeholder="Describe the bug you encountered, the page it happened on or the feature you would love to see..."
                     required
                     className="w-full p-5 rounded-2xl border-2 border-border-strong bg-bg-base font-medium text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-surface resize-none leading-relaxed"
                   />

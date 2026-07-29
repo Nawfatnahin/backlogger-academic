@@ -48,7 +48,7 @@ export default function AboutPage() {
               {/* LEFT COLUMN — Text Content */}
               <div className="space-y-4">
                 <p className="text-[17px] leading-relaxed text-gray-600 dark:text-gray-300">
-                  University students juggle too many disconnected tools &mdash;
+                  University students juggle too many disconnected tools:
                   WhatsApp for schedules, Excel for grades, random apps for PDFs.
                 </p>
                 <p className="text-[17px] leading-relaxed text-gray-600 dark:text-gray-300">
@@ -180,7 +180,7 @@ export default function AboutPage() {
                   PDF Tools
                 </h3>
                 <p className="text-[15px] text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
-                  Merge, split and convert PDFs entirely in your browser &mdash; privately.
+                  Merge, split and convert PDFs entirely in your browser privately.
                 </p>
               </div>
             </div>
@@ -251,7 +251,7 @@ export default function AboutPage() {
                 href="/dashboard"
                 className="bg-[#92400e] hover:bg-[#78350f] dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black px-8 py-4 rounded-xl font-bold transition-all duration-300 text-[17px] shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
-                Get Started &mdash; it&apos;s free
+                Get Started Free
               </Link>
               <Link
                 href="/#features"

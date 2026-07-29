@@ -99,6 +99,7 @@ export default function Navigation() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-12">
+          <Link href="/" className="text-sm font-semibold text-ink-2 hover:text-accent transition-colors">Home</Link>
           <Link href="/#features" onClick={(e) => handleScrollTo(e, "features")} className="text-sm font-semibold text-ink-2 hover:text-accent transition-colors">Features</Link>
           <Link href="/#how" onClick={(e) => handleScrollTo(e, "how")} className="text-sm font-semibold text-ink-2 hover:text-accent transition-colors">How it works</Link>
           <Link href="/#pricing" onClick={(e) => handleScrollTo(e, "pricing")} className="text-sm font-semibold text-ink-2 hover:text-accent transition-colors">Pricing</Link>
@@ -142,6 +143,10 @@ export default function Navigation() {
             : "opacity-0 scale-y-95 -translate-y-2 invisible"
         }`}
       >
+        <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-base font-bold py-3.5 border-b border-border-strong/50 flex items-center justify-between text-ink hover:text-accent transition-colors">
+          <span>Home</span>
+          <span className="text-ink-4">→</span>
+        </Link>
         <Link href="/#features" onClick={(e) => handleMobileScrollTo(e, "features")} className="text-base font-bold py-3.5 border-b border-border-strong/50 flex items-center justify-between text-ink hover:text-accent transition-colors">
           <span>Features</span>
           <span className="text-ink-4">→</span>
