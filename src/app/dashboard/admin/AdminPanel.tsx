@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck, Sparkles, Activity, XCircle, Ban
+  ShieldCheck, Mail, Plus, Crown, ArrowLeft, Users, Search, Trash2, Monitor, Database, Zap, Key, RefreshCw, Copy, Clock, CheckCircle2, Lock, Unlock, ListChecks, UserCheck, Sparkles, Activity, XCircle, Ban, MessageSquare, Bug
 } from "lucide-react";
-import { toggleProStatus, deleteSubscription, generateAccessCode, cancelAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList } from "./actions";
+import { toggleProStatus, deleteSubscription, generateAccessCode, cancelAccessCode, getActiveCode, getAllWaitlistUsers, getAllProAccessList, deleteFeedbackSubmission, type FeedbackSubmission } from "./actions";
 import { toast } from "sonner";
 import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
@@ -104,12 +104,14 @@ export default function AdminPanel({
   initialCodeInfo,
   initialWaitlist,
   initialProAccessList,
+  initialFeedback,
 }: {
   initialSubscriptions: Subscription[];
   ownerEmail: string;
   initialCodeInfo: ActiveCodeInfo | null;
   initialWaitlist: WaitlistUser[];
   initialProAccessList: ProAccessUser[];
+  initialFeedback: FeedbackSubmission[];
 }) {
   const [subscriptions, setSubscriptions] = useState(initialSubscriptions || []);
   const [newEmail, setNewEmail] = useState("");
@@ -129,6 +131,8 @@ export default function AdminPanel({
   // Waitlist & Pro Access State
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>(initialWaitlist || []);
   const [proAccessUsers, setProAccessUsers] = useState<ProAccessUser[]>(initialProAccessList || []);
+  const [feedbackSubmissions, setFeedbackSubmissions] = useState<FeedbackSubmission[]>(initialFeedback || []);
+  const [feedbackSearch, setFeedbackSearch] = useState("");
 
   const totalGmails = (subscriptions || []).length;
   const isActuallyPro = (s: Subscription) => s.plan === 'pro' && (!s.premium_until || new Date(s.premium_until) > new Date());
@@ -153,6 +157,13 @@ export default function AdminPanel({
     
   const filteredProAccess = proAccessUsers
     .filter(u => u.email.toLowerCase().includes(proSearch.toLowerCase()));
+
+  const filteredFeedback = feedbackSubmissions
+    .filter(item => 
+      item.email.toLowerCase().includes(feedbackSearch.toLowerCase()) ||
+      item.message.toLowerCase().includes(feedbackSearch.toLowerCase()) ||
+      item.category.toLowerCase().includes(feedbackSearch.toLowerCase())
+    );
 
   const handleTogglePro = async (email: string, currentPlan: string) => {
     const isPro = currentPlan === 'pro';
@@ -287,6 +298,21 @@ export default function AdminPanel({
       toast.error("Failed to cancel access code.");
     } finally {
       setIsCancelling(false);
+    }
+  };
+
+  const handleDeleteFeedback = async (id: string) => {
+    if (!window.confirm("Remove this feedback entry?")) return;
+    try {
+      const res = await deleteFeedbackSubmission(id);
+      if (res.success) {
+        setFeedbackSubmissions(prev => prev.filter(item => item.id !== id));
+        toast.success("Feedback entry removed.");
+      } else {
+        toast.error(res.error || "Failed to remove feedback.");
+      }
+    } catch {
+      toast.error("Failed to remove feedback.");
     }
   };
 
@@ -759,6 +785,89 @@ export default function AdminPanel({
               <span className="text-xs text-text-secondary font-semibold">{filteredSubscriptions.length} registered accounts</span>
             </div>
           </div>
+        </section>
+
+        {/* User Feedback & Bug Reports Section */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-text-primary">User Feedback & Bug Reports</h2>
+                <p className="text-xs text-text-tertiary font-medium">Submissions from the About page feedback system.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-72">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <input
+                  value={feedbackSearch}
+                  onChange={(e) => setFeedbackSearch(e.target.value)}
+                  placeholder="Search feedback or bugs..."
+                  className="w-full bg-bg-surface border border-border-default/80 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-accent transition-colors shadow-xs font-medium"
+                />
+              </div>
+              <span className="text-xs font-bold bg-bg-surface px-3 py-2.5 rounded-xl border border-border-default text-text-secondary">
+                {feedbackSubmissions.length} Total
+              </span>
+            </div>
+          </div>
+
+          {filteredFeedback.length === 0 ? (
+            <div className="bg-bg-surface border border-border-default border-dashed rounded-3xl p-10 text-center text-text-tertiary text-sm font-medium">
+              No feedback or bug reports submitted yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredFeedback.map((item) => (
+                <SpotlightCard key={item.id} className="p-6 flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={cn(
+                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border",
+                        item.category === "bug"
+                          ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
+                          : item.category === "feature"
+                          ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
+                          : "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
+                      )}>
+                        {item.category === "bug" && <Bug className="w-3.5 h-3.5" />}
+                        {item.category === "feature" && <Sparkles className="w-3.5 h-3.5" />}
+                        {item.category === "feedback" && <MessageSquare className="w-3.5 h-3.5" />}
+                        {item.category}
+                      </span>
+                      <span className="text-[11px] font-medium text-text-tertiary">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    <p className="text-sm font-medium text-text-primary leading-relaxed whitespace-pre-wrap bg-bg/50 p-3.5 rounded-2xl border border-border-default/60">
+                      &ldquo;{item.message}&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border-default/40">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
+                      <span className="text-xs font-bold text-text-secondary truncate" title={item.email}>
+                        {item.email}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteFeedback(item.id)}
+                      className="p-2 text-text-tertiary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors flex-shrink-0"
+                      title="Dismiss feedback"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </SpotlightCard>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

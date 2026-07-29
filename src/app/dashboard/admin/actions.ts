@@ -379,3 +379,90 @@ export async function redeemAccessCode(
     return { success: false, error: errorMessage };
   }
 }
+
+// ─────────────────────────────────────────────
+// FEEDBACK & BUG SUBMISSIONS
+// ─────────────────────────────────────────────
+
+export interface FeedbackSubmission {
+  id: string;
+  email: string;
+  category: string;
+  message: string;
+  created_at: string;
+}
+
+export async function submitFeedback(
+  email: string,
+  category: string,
+  message: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanMessage = message.trim();
+    const cleanCategory = category.trim();
+
+    if (!cleanEmail || !cleanMessage) {
+      return { success: false, error: 'Email and message are required' };
+    }
+
+    const { error } = await supabase.from('feedback_submissions').insert({
+      email: cleanEmail,
+      category: cleanCategory || 'general',
+      message: cleanMessage,
+    });
+
+    if (error) {
+      console.error('Error inserting feedback:', error);
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath('/dashboard/admin');
+    return { success: true };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+  }
+}
+
+export async function getAllFeedbackSubmissions(): Promise<FeedbackSubmission[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('feedback_submissions')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching feedback submissions:', error);
+      return [];
+    }
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function deleteFeedbackSubmission(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const { error } = await supabase
+      .from('feedback_submissions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath('/dashboard/admin');
+    return { success: true };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+  }
+}

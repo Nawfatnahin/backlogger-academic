@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import FeedbackSection from "@/components/FeedbackSection";
 
 export default function AboutPage() {
   return (
@@ -231,6 +232,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* SECTION 5.5 — Feedback & Bug Submissions */}
+        <FeedbackSection />
 
         {/* SECTION 6 — CTA */}
         <section className="bg-bg-base py-20 md:py-28 text-center">
