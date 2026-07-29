@@ -245,13 +245,13 @@ export default function AboutPage() {
             <div className="flex gap-4 justify-center flex-wrap mt-8">
               <Link
                 href="/dashboard"
-                className="bg-[#92400e] hover:bg-[#78350f] text-white px-8 py-4 rounded-lg font-medium transition-colors text-[17px]"
+                className="bg-[#92400e] hover:bg-[#78350f] dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black px-8 py-4 rounded-xl font-bold transition-all duration-300 text-[17px] shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
                 Get Started &mdash; it&apos;s free
               </Link>
               <Link
                 href="/#features"
-                className="bg-gray-50/80 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200/80 dark:border-gray-800/80 hover:border-[#a67c52]/50 dark:hover:border-[#c49a6c]/50 text-gray-700 dark:text-gray-300 hover:text-[#a67c52] dark:hover:text-[#c49a6c] hover:bg-white dark:hover:bg-gray-900 px-8 py-4 rounded-xl font-medium transition-all duration-300 shadow-sm hover:shadow text-[17px]"
+                className="bg-bg-surface dark:bg-zinc-900 border border-border-strong dark:border-zinc-800 text-text-primary dark:text-gray-200 hover:border-accent dark:hover:border-white/40 px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-sm hover:scale-[1.02] active:scale-[0.98] text-[17px]"
               >
                 Explore features
               </Link>
