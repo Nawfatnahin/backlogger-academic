@@ -22,22 +22,22 @@
 }
 
 .dark {
-  --bg-base:        #000000;
-  --bg-surface:     #080808;
-  --bg-elevated:    #101010;
-  --border-subtle:  rgba(255, 255, 255, 0.04);
-  --border-default: rgba(255, 255, 255, 0.08);
-  --text-primary:   #FFFFFF;
-  --text-secondary: #a8a8a8;
-  --text-tertiary:  #6b6b6b;
-  --panel-alt:      #121214;
-  --accent-color:   #92400e;
-  --accent-soft:    #f59e0b;
-  --accent-deep:    #92400e;
-  --accent-glow:    rgba(146, 64, 14, 0.15);
-  --accent-line:    rgba(146, 64, 14, 0.25);
-  --bg-panel-left:  rgba(0, 0, 0, 0.2);
-  --track-bg:       #2A2A2A;
+  --bg-base:        #0c0c0e;
+  --bg-surface:     #141416;
+  --bg-elevated:    #1c1c1f;
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --text-primary:   #f0f0f3;
+  --text-secondary: #9ca3af;
+  --text-tertiary:  #6b7280;
+  --panel-alt:      #18181b;
+  --accent-color:   #d97706;
+  --accent-soft:    #fbbf24;
+  --accent-deep:    #b45309;
+  --accent-glow:    rgba(217, 119, 6, 0.12);
+  --accent-line:    rgba(217, 119, 6, 0.20);
+  --bg-panel-left:  rgba(0, 0, 0, 0.3);
+  --track-bg:       #27272a;
 }
 
 .admin-theme {
@@ -60,22 +60,22 @@
 }
 
 .dark .admin-theme {
-  --bg-base:        #000000;
-  --bg-surface:     #080808;
-  --bg-elevated:    #101010;
-  --border-subtle:  rgba(255, 255, 255, 0.04);
-  --border-default: rgba(255, 255, 255, 0.08);
-  --text-primary:   #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-tertiary:  #808080;
-  --panel-alt:      #121214;
+  --bg-base:        #0c0c0e;
+  --bg-surface:     #141416;
+  --bg-elevated:    #1c1c1f;
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --text-primary:   #f0f0f3;
+  --text-secondary: #9ca3af;
+  --text-tertiary:  #6b7280;
+  --panel-alt:      #18181b;
   --accent-color:   #E07A3C;
   --accent-soft:    #F5A97F;
   --accent-deep:    #B05C2B;
   --accent-glow:    rgba(224, 122, 60, 0.15);
   --accent-line:    rgba(176, 92, 43, 0.25);
-  --bg-panel-left:  rgba(0, 0, 0, 0.2);
-  --track-bg:       #2A2A2A;
+  --bg-panel-left:  rgba(0, 0, 0, 0.3);
+  --track-bg:       #27272a;
 }
 
 .admin-theme .glass-card,
@@ -165,7 +165,9 @@ html, body {
     @apply touch-manipulation;
   }
 
-  /* Instagram-Inspired Dark Mode Aesthetics */
+  /* ── Premium Dark Mode ─────────────────────────────────── */
+
+  /* Text color mapping */
   .dark h1, 
   .dark h2, 
   .dark h3, 
@@ -173,50 +175,45 @@ html, body {
   .dark h5, 
   .dark h6, 
   .dark .text-ink {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
   .dark .text-ink-2 {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
 
   .dark .text-ink-3 {
-    color: #6b6b6b !important;
+    color: var(--text-tertiary) !important;
   }
 
-  /* Text gradient for accent elements, EXCLUDING buttons, SVGs, or flex containers */
+  /* Accent text — solid warm amber, no gradient */
   .dark .text-accent:not(button):not(a):not(span.text-white):not(svg):not(path):not(.flex),
   .dark .italic.text-accent,
   .dark .text-accent-premium {
-    background: linear-gradient(135deg, #833AB4 10%, #FD1D1D 50%, #F77737 90%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
-    display: inline-block;
+    color: var(--accent-soft) !important;
   }
 
-  /* CGPA Status cards overrides in Dark Mode */
+  /* CGPA Status cards — preserve semantic colors */
   .dark .bg-emerald-50 {
-    background-color: rgba(16, 185, 129, 0.12) !important;
-    border-color: rgba(16, 185, 129, 0.25) !important;
+    background-color: rgba(16, 185, 129, 0.10) !important;
+    border-color: rgba(16, 185, 129, 0.20) !important;
   }
   .dark .bg-amber-50 {
-    background-color: rgba(245, 158, 11, 0.12) !important;
-    border-color: rgba(245, 158, 11, 0.25) !important;
+    background-color: rgba(245, 158, 11, 0.10) !important;
+    border-color: rgba(245, 158, 11, 0.20) !important;
   }
   .dark .bg-emerald-50 .text-emerald-600,
   .dark .bg-emerald-50 svg {
-    color: #10B981 !important;
-    stroke: #10B981 !important;
+    color: #34d399 !important;
+    stroke: #34d399 !important;
   }
   .dark .bg-amber-50 .text-amber-600,
   .dark .bg-amber-50 svg {
-    color: #F59E0B !important;
-    stroke: #F59E0B !important;
+    color: #fbbf24 !important;
+    stroke: #fbbf24 !important;
   }
 
-  /* SVG Logo & Icon Safety overrides in Dark Mode */
+  /* SVG icons — use accent color, not gradient */
   .dark svg.text-accent,
   .dark svg.text-accent path,
   .dark svg.text-accent-premium,
@@ -225,221 +222,197 @@ html, body {
   .dark .text-accent svg path,
   .dark .text-accent-premium svg,
   .dark .text-accent-premium svg path {
-    background: none !important;
-    -webkit-background-clip: border-box !important;
-    background-clip: border-box !important;
-    -webkit-text-fill-color: #FD1D1D !important;
-    color: #FD1D1D !important;
-    stroke: #FD1D1D !important;
+    color: var(--accent-soft) !important;
+    stroke: var(--accent-soft) !important;
   }
 
-  /* Explicitly target stats pedestal icons inside Interactive3DBox & other card icons to glow with pink-red */
-  .dark .perspective-2000 .w-12.h-12 svg,
-  .dark .perspective-2000 .w-12.h-12 svg path,
-  .dark .w-16.h-16.rounded-\[24px\] svg,
-  .dark .w-16.h-16.rounded-\[24px\] svg path,
-  .dark .w-20.h-20.rounded-\[32px\] svg,
-  .dark .w-20.h-20.rounded-\[32px\] svg path {
-    stroke: #FD1D1D !important;
-    color: #FD1D1D !important;
-    background: none !important;
-    background-clip: border-box !important;
-    -webkit-text-fill-color: #FD1D1D !important;
-  }
-
-  /* Floating White Boxes Redesign (Hero top-right badge & Admin pulse badge) */
+  /* Floating badges (hero top-right, admin pulse) */
   .dark .absolute.-top-4.-right-2,
   .dark .absolute.-top-6.sm\:-top-6.-right-6,
   .dark .absolute.-top-6.right-12 .bg-white {
-    background: rgba(30, 30, 30, 0.75) !important;
+    background: var(--bg-elevated) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+    color: var(--text-primary) !important;
   }
 
   .dark .absolute.-top-4.-right-2 p,
   .dark .absolute.-top-6.right-12 .bg-white span,
   .dark .absolute.-top-4.-right-2 span {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
-  /* GradeScaleEditor and generic Inputs/Dropdowns dark redesign */
+  /* Inputs & selects */
   .dark input[type="text"],
   .dark input[type="number"],
   .dark input[type="email"],
   .dark select {
-    background-color: #161616 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    color: #FFFFFF !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-    transition: all 0.3s ease !important;
+    background-color: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    color: var(--text-primary) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
   }
 
   .dark input[type="text"]:focus,
   .dark input[type="number"]:focus,
   .dark input[type="email"]:focus,
   .dark select:focus {
-    border-color: rgba(131, 58, 180, 0.6) !important;
-    box-shadow: 0 0 12px rgba(131, 58, 180, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 3px rgba(0, 0, 0, 0.3) !important;
   }
 
+  /* Stone/light background overrides */
   .dark .bg-stone-50,
   .dark .bg-stone-50\/50,
   .dark .hover\:bg-stone-50\/50:hover,
   .dark .grid.grid-cols-\[1fr_1fr_48px\].bg-stone-50 {
-    background-color: rgba(255, 255, 255, 0.02) !important;
+    background-color: rgba(255, 255, 255, 0.03) !important;
   }
 
   .dark .border-stone-100 {
-    border-color: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
   .dark .border-stone-50 {
-    border-color: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
   }
 
+  /* Violet/accent buttons */
   .dark button.bg-violet-50,
   .dark button.bg-violet-100 {
-    background: rgba(139, 92, 246, 0.15) !important;
+    background: rgba(139, 92, 246, 0.12) !important;
     color: #a78bfa !important;
   }
 
   .dark button.bg-violet-50:hover,
   .dark button.bg-violet-100:hover {
-    background: rgba(139, 92, 246, 0.25) !important;
+    background: rgba(139, 92, 246, 0.20) !important;
   }
 
   .dark button.bg-\[\#92400e\]\/10 {
-    background: rgba(253, 29, 29, 0.15) !important;
-    color: #FD1D1D !important;
+    background: rgba(217, 119, 6, 0.12) !important;
+    color: var(--accent-soft) !important;
   }
 
   .dark button.bg-\[\#92400e\]\/10:hover {
-    background: rgba(253, 29, 29, 0.25) !important;
+    background: rgba(217, 119, 6, 0.20) !important;
   }
 
-  /* Gmail / User Profile and Sign In boxes */
+  /* User profile / sign-in boxes */
   .dark .bg-white\/50.border.border-border-strong {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+    color: var(--text-primary) !important;
   }
   .dark .bg-white\/50.border.border-border-strong span.text-ink {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
   .dark .bg-white\/50.border.border-border-strong svg {
-    stroke: #a8a8a8 !important;
+    stroke: var(--text-secondary) !important;
   }
 
-  /* active button tab label visibility */
+  /* Active tab button */
   .dark button.bg-white span,
   .dark button.bg-white svg,
   .dark button.bg-white {
-    -webkit-text-fill-color: #FFFFFF !important;
-    color: #FFFFFF !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    color: var(--text-primary) !important;
     background: none !important;
     background-clip: border-box !important;
   }
 
-  /* Green-100 attendance check badge */
+  /* Green attendance badges */
   .dark .bg-green-100 {
-    background: rgba(16, 185, 129, 0.15) !important;
-    color: #10B981 !important;
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #34d399 !important;
   }
   .dark .text-green-600 {
-    color: #10B981 !important;
+    color: #34d399 !important;
   }
 
-  /* Pricing Cards details visibility */
+  /* Pricing cards text visibility */
   .dark .glass-card.border-2.border-accent-premium span,
   .dark .glass-card.border-2.border-accent-premium div,
   .dark .glass-card.border-2.border-accent-premium li {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
   .dark .glass-card.border-2.border-accent-premium .text-ink-3 {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
   .dark .perspective-1000 .bg-white {
-    background: #121212 !important;
-    border: 1px solid rgba(245, 158, 11, 0.25) !important;
-    box-shadow: 0 15px 40px rgba(245, 158, 11, 0.1) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
   }
   .dark .perspective-1000 .bg-white h3,
   .dark .perspective-1000 .bg-white p {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
   .dark .perspective-1000 .bg-white p.text-ink-2 {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
 
-  /* About Section White Boxes Redesign */
+  /* White/light surface cards → dark elevated surface */
   .dark .bg-white\/40, 
   .dark .bg-white\/60,
   .dark .bg-gradient-to-br.from-\[\#fff7ed\].to-\[\#ffedd5\] {
-    background: linear-gradient(rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.2), rgba(253, 29, 29, 0.2), rgba(247, 119, 55, 0.2)) border-box !important;
-    border: 1px solid transparent !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
   }
 
   .dark .bg-gradient-to-br.from-\[\#fff7ed\].to-\[\#ffedd5\] li {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
   .dark .bg-gradient-to-br.from-\[\#fff7ed\].to-\[\#ffedd5\] h4 {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
-  /* Centered Section Headings Glow */
+  /* Section headings — solid accent, no gradient */
   .dark h2.text-\[12px\].font-black.text-ink-4.uppercase,
   .dark h2.text-\[11px\].font-black.text-ink-4.uppercase {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
-    display: inline-block;
+    color: var(--accent-soft) !important;
   }
 
-  /* Tools back buttons visibility */
+  /* Header back buttons */
   .dark header a[href="/dashboard"],
   .dark header button {
-    background: #1e1e1e !important;
-    color: #FFFFFF !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
   }
 
   .dark header a[href="/dashboard"]:hover,
   .dark header button:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: #FD1D1D !important;
-    border-color: #FD1D1D !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--accent-soft) !important;
+    border-color: var(--accent-color) !important;
   }
 
-  /* Super Admin box badge redesigned */
+  /* Admin badge */
   .dark .inline-flex.items-center.rounded-full.bg-amber-50 {
-    background: rgba(253, 29, 29, 0.1) !important;
-    border-color: rgba(253, 29, 29, 0.3) !important;
-    color: #FD1D1D !important;
+    background: rgba(217, 119, 6, 0.10) !important;
+    border-color: rgba(217, 119, 6, 0.25) !important;
+    color: var(--accent-soft) !important;
   }
 
-  /* Admin Panel Boxes Redesign */
+  /* Admin panel / 3D perspective cards */
   .dark .perspective-2000 .bg-white,
   .dark .bg-white.border.border-border-strong.rounded-\[40px\],
   .dark .bg-white.border.border-border-strong.rounded-3xl {
-    background: linear-gradient(rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.2), rgba(253, 29, 29, 0.2), rgba(247, 119, 55, 0.2)) border-box !important;
-    border: 1px solid transparent !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
   }
 
   .dark .perspective-2000 .bg-white:hover {
-    background: linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.4), rgba(253, 29, 29, 0.4), rgba(247, 119, 55, 0.4)) border-box !important;
-    box-shadow: 0 20px 40px rgba(131, 58, 180, 0.15), 
-                0 0 30px rgba(253, 29, 29, 0.1) !important;
+    background: var(--bg-elevated) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4) !important;
   }
 
   .dark .perspective-2000 p,
@@ -447,24 +420,25 @@ html, body {
   .dark .perspective-2000 h4,
   .dark .perspective-2000 div,
   .dark .perspective-2000 td {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
   .dark .perspective-2000 .text-ink-3,
   .dark .perspective-2000 span.text-ink-3 {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
 
+  /* Tables */
   .dark table thead tr.bg-bg {
-    background: rgba(255, 255, 255, 0.02) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
   }
 
   .dark table thead tr th {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
   .dark table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.02) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
   }
 
   .dark table tbody tr td {
@@ -476,145 +450,134 @@ html, body {
     border-top-color: rgba(255, 255, 255, 0.06) !important;
   }
 
+  /* Footer — clean border, no gradient */
   .dark footer.mt-40.bg-white {
-    background: #0a0a0a !important;
-    border-top: 1px solid transparent !important;
-    border-image: linear-gradient(to right, rgba(131, 58, 180, 0.3), rgba(253, 29, 29, 0.3), rgba(247, 119, 55, 0.3)) 1 !important;
+    background: var(--bg-base) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: none !important;
   }
 
   .dark footer.mt-40.bg-white p,
   .dark footer.mt-40.bg-white span,
   .dark footer.mt-40.bg-white div {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
 
+  /* Forms on white bg */
   .dark form.bg-white.border.border-border-strong {
-    background: #111111 !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: var(--bg-surface) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
   }
 
   .dark form.bg-white.border.border-border-strong input {
-    background: #1e1e1e !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #FFFFFF !important;
+    background: var(--bg-elevated) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+    color: var(--text-primary) !important;
   }
 
+  /* 3D card glare */
   .dark .perspective-2000 div[style*="radial-gradient"] {
-    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.1) 0%, transparent 60%) !important;
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.06) 0%, transparent 60%) !important;
   }
 
-  /* Sign Out Button in Dark Mode */
+  /* Sign out / accent buttons — solid amber, no gradient */
   .dark button.bg-\[\#92400e\] {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D) !important;
-    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.4) !important;
+    background: var(--accent-color) !important;
+    box-shadow: 0 4px 12px var(--accent-glow) !important;
   }
 
   .dark button.bg-\[\#92400e\]:hover {
-    background: linear-gradient(135deg, #FD1D1D, #F77737) !important;
-    box-shadow: 0 8px 25px rgba(253, 29, 29, 0.6) !important;
+    background: var(--accent-deep) !important;
+    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.3) !important;
   }
 
-  /* Core 3D Glassmorphism Cards in Dark Mode */
+  /* Glass cards — subtle border, no rainbow gradient */
   .dark .glass-card,
   .dark .backdrop-blur-xl {
-    background: linear-gradient(rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.15), rgba(253, 29, 29, 0.15), rgba(247, 119, 55, 0.15)) border-box !important;
-    border: 1px solid transparent !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   .dark .glass-card:hover,
   .dark .backdrop-blur-xl:hover {
-    transform: translateY(-4px) !important;
-    background: linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.4), rgba(253, 29, 29, 0.4), rgba(247, 119, 55, 0.4)) border-box !important;
-    box-shadow: 0 20px 40px rgba(131, 58, 180, 0.15), 
-                0 0 30px rgba(253, 29, 29, 0.1), 
-                0 0 20px rgba(247, 119, 55, 0.05) !important;
+    transform: translateY(-3px) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4) !important;
   }
 
-  /* Primary CTA Buttons */
+  /* Primary CTA — solid amber */
   .dark .btn-primary, 
   .dark .bg-accent.text-white {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
+    background: var(--accent-color) !important;
     color: #FFFFFF !important;
-    border-radius: 9999px !important;
     border: none !important;
-    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.3) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 12px var(--accent-glow) !important;
+    transition: all 0.2s ease !important;
   }
 
   .dark .btn-primary:hover, 
   .dark .bg-accent.text-white:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(253, 29, 29, 0.5), 0 0 15px rgba(131, 58, 180, 0.4) !important;
+    background: var(--accent-deep) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.25) !important;
   }
 
-  /* Secondary Buttons */
+  /* Secondary buttons — clean border */
   .dark .btn-secondary, 
   .dark a[href="#features"], 
   .dark a[href="/login"],
   .dark a[href="#pricing"] {
     background: transparent !important;
-    color: #FFFFFF !important;
-    border: 1px solid transparent !important;
-    background-image: linear-gradient(#0a0a0a, #0a0a0a) padding-box,
-                      linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) border-box !important;
-    border-radius: 9999px !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
     box-shadow: none !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.2s ease !important;
   }
 
   .dark .btn-secondary:hover, 
   .dark a[href="#features"]:hover, 
   .dark a[href="/login"]:hover,
   .dark a[href="#pricing"]:hover {
-    transform: translateY(-2px) !important;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)) padding-box,
-                      linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) border-box !important;
-    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.2) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    transform: translateY(-1px) !important;
   }
 
-  /* Frosted Glass Navbar */
+  /* Navbar */
   .dark nav {
     transition: background-color 0.3s, backdrop-filter 0.3s, border-color 0.3s !important;
   }
 
   .dark nav.nav-glass {
-    background: rgba(0, 0, 0, 0.6) !important;
+    background: rgba(12, 12, 14, 0.75) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    border-bottom: 1px solid transparent !important;
-    border-image: linear-gradient(to right, rgba(131, 58, 180, 0.3), rgba(253, 29, 29, 0.3), rgba(247, 119, 55, 0.3)) 1 !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* Logo Gradient Text & SVG Accent mapping */
+  /* Logo text */
   .dark span.text-xl.font-bold.text-\[\#8B4513\],
   .dark span.text-xl.font-bold.text-accent,
   .dark span.text-ink {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
   .dark a.group[href="/"] span.text-accent,
   .dark a.group[href="/"] span.text-\[\#8B4513\] {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
+    color: var(--accent-soft) !important;
   }
 
   .dark a.group[href="/"] svg,
   .dark a.group[href="/"] svg path {
-    stroke: url(#insta-gradient) !important;
+    stroke: var(--accent-soft) !important;
   }
 
-  /* Hero Background Bloom */
+  /* Hero ambient glow — warm amber */
   .dark section.pt-32::before {
     content: "";
     position: absolute;
@@ -622,69 +585,53 @@ html, body {
     left: 20%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(131, 58, 180, 0.12) 0%, rgba(253, 29, 29, 0.06) 45%, transparent 75%);
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, rgba(251, 191, 36, 0.04) 45%, transparent 75%);
     border-radius: 50%;
     pointer-events: none;
     z-index: -1;
     filter: blur(90px);
   }
 
-  /* Subject list items inside Stats Card tab */
+  /* Subject list items */
   .dark .bg-white\/40.backdrop-blur-xl.border.border-white\/60.p-4.rounded-2xl {
-    background: linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.1), rgba(253, 29, 29, 0.1), rgba(247, 119, 55, 0.1)) border-box !important;
-    border: 1px solid transparent !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
   }
 
   .dark .bg-white\/40.backdrop-blur-xl.border.border-white\/60.p-4.rounded-2xl:hover {
-    background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)) padding-box,
-                linear-gradient(135deg, rgba(131, 58, 180, 0.3), rgba(253, 29, 29, 0.3), rgba(247, 119, 55, 0.3)) border-box !important;
+    background: var(--bg-elevated) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
     transform: translateY(-2px) !important;
   }
 
-  /* Gradient Progress Bars */
-  .dark .h-full.bg-gradient-to-r {
-    background-image: linear-gradient(to right, #833AB4, #FD1D1D, #F77737) !important;
-  }
-
-  /* Step Numbers and Icon Fills */
+  /* Step numbers / icon containers */
   .dark .w-14.h-14.rounded-full {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
-    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.4) !important;
-    color: #FFFFFF !important;
-    ring-color: rgba(253, 29, 29, 0.1) !important;
-  }
-
-  .dark .w-16.h-16.rounded-\[24px\] {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
-    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.3) !important;
-  }
-
-  .dark .w-16.h-16.rounded-\[24px\] svg {
-    stroke: #FFFFFF !important;
-  }
-
-  /* Attendance Stats Badge Card */
-  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm:p-4 {
-    background: #1e1e1e !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
-  }
-
-  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm:p-4 p {
+    background: var(--accent-color) !important;
+    box-shadow: 0 4px 12px var(--accent-glow) !important;
     color: #FFFFFF !important;
   }
 
-  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm:p-4 p.text-ink-3 {
-    color: #a8a8a8 !important;
+  /* Attendance stats badge cards */
+  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm\:p-4 {
+    background: var(--bg-surface) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* Free Pricing card dark mode matching Pro styling but with border */
+  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm\:p-4 p {
+    color: var(--text-primary) !important;
+  }
+
+  .dark .bg-white.border.border-border-strong.rounded-2xl.p-3.sm\:p-4 p.text-ink-3 {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Free pricing card */
   .dark .glass-card.border-2.border-accent-premium {
-    background: #111111 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
   }
 
   .dark .glass-card.border-2.border-accent-premium li {
@@ -692,26 +639,24 @@ html, body {
   }
 
   .dark .glass-card.border-2.border-accent-premium a {
-    background: #1e1e1e !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #FFFFFF !important;
+    background: var(--bg-elevated) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+    color: var(--text-primary) !important;
   }
 
   .dark .glass-card.border-2.border-accent-premium a:hover {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border-color: #FD1D1D !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: var(--accent-color) !important;
   }
 
-  /* Pro Card matching */
+  /* Pro card */
   .dark .bg-ink.border {
-    background: #161616 !important;
-    border-color: rgba(253, 29, 29, 0.3) !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+    background: var(--bg-surface) !important;
+    border-color: rgba(217, 119, 6, 0.25) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
   }
 
-  /* Pricing Pro card CTA — exempt from global button.bg-white dark override.
-     The global rule strips bg + forces white text for tab buttons, but the
-     pricing CTA must stay white-bg / dark-text since it sits on the dark bg-ink card. */
+  /* Pricing Pro card CTA — keep white-bg / dark-text on dark bg-ink card */
   .dark #pricing .bg-ink button.bg-white,
   .dark #pricing .bg-ink button.bg-white span,
   .dark #pricing .bg-ink button.bg-white svg,
@@ -722,42 +667,40 @@ html, body {
     -webkit-text-fill-color: #111111 !important;
   }
 
-  /* Tab group container backgrounds */
+  /* Tab group containers */
   .dark .bg-stone-200\/40 {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border-color: rgba(255, 255, 255, 0.06) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
   .dark .bg-stone-200\/40 button {
-    color: #a8a8a8 !important;
+    color: var(--text-secondary) !important;
   }
 
   .dark .bg-stone-200\/40 button:hover {
-    color: #FFFFFF !important;
+    color: var(--text-primary) !important;
   }
 
   .dark .bg-stone-200\/40 button.bg-white {
-    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737) !important;
+    background: var(--accent-color) !important;
     color: #FFFFFF !important;
     border: none !important;
-    box-shadow: 0 4px 10px rgba(253, 29, 29, 0.2) !important;
+    box-shadow: 0 2px 8px var(--accent-glow) !important;
   }
 
-  /* Footer Redesign */
+  /* Footer — clean */
   .dark footer {
-    background-color: #0a0a0a !important;
-    border-top: 1px solid transparent !important;
-    border-image: linear-gradient(to right, rgba(131, 58, 180, 0.3), rgba(253, 29, 29, 0.3), rgba(247, 119, 55, 0.3)) 1 !important;
+    background-color: var(--bg-base) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
 
   .dark footer a {
-    color: #6b6b6b !important;
-    transition: color 0.3s ease, text-shadow 0.3s ease !important;
+    color: var(--text-tertiary) !important;
+    transition: color 0.2s ease !important;
   }
 
   .dark footer a:hover {
-    color: #FD1D1D !important;
-    text-shadow: 0 0 8px rgba(253, 29, 29, 0.5) !important;
+    color: var(--accent-soft) !important;
   }
 
   /* Jarvis Theme Scoped Classes */
