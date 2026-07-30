@@ -136,63 +136,65 @@ export default function FeedbackSection() {
             <div className="glass-card rounded-[32px] p-8 md:p-12 border border-border-strong dark:border-white/10 bg-bg-surface/80 dark:bg-bg-elevated/80 shadow-xl">
               <form onSubmit={handleOpenConfirm} className="space-y-6">
                 {/* Category Selection */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
+                <div className="space-y-3">
+                  <label className="text-[11px] font-black text-text-primary dark:text-gray-200 uppercase tracking-widest block">
                     Feedback Category
                   </label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button
                       type="button"
                       onClick={() => setCategory("bug")}
-                      className={`flex items-center justify-center gap-2 p-3.5 rounded-2xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2.5 p-4 rounded-2xl border-2 text-xs font-bold transition-all duration-200 ${
                         category === "bug"
-                          ? "bg-red-500/10 border-red-500/40 text-red-600 dark:text-red-400 shadow-sm"
-                          : "bg-bg-base border-border-strong text-text-tertiary hover:text-text-primary"
+                          ? "bg-red-500/15 dark:bg-red-500/25 border-red-500 text-red-600 dark:text-red-300 shadow-md shadow-red-500/10 scale-[1.02]"
+                          : "bg-bg-base dark:bg-bg-base/90 border-border-strong dark:border-white/15 text-text-secondary dark:text-gray-300 hover:text-text-primary hover:border-red-500/40 hover:bg-bg-surface dark:hover:bg-bg-elevated"
                       }`}
                     >
-                      <Bug className="w-4 h-4" />
+                      <Bug className={`w-4 h-4 ${category === "bug" ? "text-red-500" : "text-text-tertiary dark:text-gray-400"}`} />
                       <span>Bug Report</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setCategory("feature")}
-                      className={`flex items-center justify-center gap-2 p-3.5 rounded-2xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2.5 p-4 rounded-2xl border-2 text-xs font-bold transition-all duration-200 ${
                         category === "feature"
-                          ? "bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400 shadow-sm"
-                          : "bg-bg-base border-border-strong text-text-tertiary hover:text-text-primary"
+                          ? "bg-amber-500/15 dark:bg-amber-500/25 border-amber-500 text-amber-600 dark:text-amber-300 shadow-md shadow-amber-500/10 scale-[1.02]"
+                          : "bg-bg-base dark:bg-bg-base/90 border-border-strong dark:border-white/15 text-text-secondary dark:text-gray-300 hover:text-text-primary hover:border-amber-500/40 hover:bg-bg-surface dark:hover:bg-bg-elevated"
                       }`}
                     >
-                      <Sparkles className="w-4 h-4" />
+                      <Sparkles className={`w-4 h-4 ${category === "feature" ? "text-amber-500" : "text-text-tertiary dark:text-gray-400"}`} />
                       <span>New Feature</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setCategory("feedback")}
-                      className={`flex items-center justify-center gap-2 p-3.5 rounded-2xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2.5 p-4 rounded-2xl border-2 text-xs font-bold transition-all duration-200 ${
                         category === "feedback"
-                          ? "bg-blue-500/10 border-blue-500/40 text-blue-600 dark:text-blue-400 shadow-sm"
-                          : "bg-bg-base border-border-strong text-text-tertiary hover:text-text-primary"
+                          ? "bg-amber-500/15 dark:bg-amber-500/25 border-amber-500 text-amber-600 dark:text-amber-300 shadow-md shadow-amber-500/10 scale-[1.02]"
+                          : "bg-bg-base dark:bg-bg-base/90 border-border-strong dark:border-white/15 text-text-secondary dark:text-gray-300 hover:text-text-primary hover:border-amber-500/40 hover:bg-bg-surface dark:hover:bg-bg-elevated"
                       }`}
                     >
-                      <MessageSquare className="w-4 h-4" />
+                      <MessageSquare className={`w-4 h-4 ${category === "feedback" ? "text-amber-500" : "text-text-tertiary dark:text-gray-400"}`} />
                       <span>General</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Message Field */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
+                <div className="space-y-3">
+                  <label className="text-[11px] font-black text-text-primary dark:text-gray-200 uppercase tracking-widest block">
                     What would you like to report or improve?
                   </label>
-                  <textarea
-                    rows={4}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Describe the bug you encountered, the page it happened on or the feature you would love to see..."
-                    required
-                    className="w-full p-5 rounded-2xl border-2 border-border-strong bg-bg-base font-medium text-text-primary outline-none focus:border-accent transition-all dark:bg-bg-surface resize-none leading-relaxed"
-                  />
+                  <div className="relative rounded-2xl p-0.5 bg-gradient-to-b from-border-strong to-transparent dark:from-white/20 dark:to-white/5">
+                    <textarea
+                      rows={5}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Describe the bug you encountered, the page it happened on or the feature you would love to see..."
+                      required
+                      className="w-full p-5 rounded-[14px] border-2 border-border-strong dark:border-white/15 bg-white dark:bg-[#0c0c0e] font-medium text-text-primary dark:text-gray-100 placeholder:text-text-tertiary dark:placeholder:text-gray-400 outline-none focus:border-accent dark:focus:border-amber-500 focus:ring-4 focus:ring-accent/10 dark:focus:ring-amber-500/20 transition-all resize-none leading-relaxed shadow-inner"
+                    />
+                  </div>
                 </div>
 
                 {/* Submit Button */}

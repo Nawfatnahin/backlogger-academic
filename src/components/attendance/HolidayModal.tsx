@@ -115,7 +115,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({
             </div>
 
             <div className="flex-1 overflow-y-auto p-10 space-y-10">
-              <form onSubmit={handleSubmit} className="space-y-6 p-8 bg-white/60 rounded-[32px] border border-border-strong">
+              <form onSubmit={handleSubmit} className="space-y-6 p-8 bg-white/60 dark:bg-bg-surface/80 rounded-[32px] border border-border-strong">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-ink-3 uppercase tracking-widest">Holiday Name</label>
@@ -124,7 +124,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. National Day"
-                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-white font-bold text-ink outline-none focus:border-[#92400e] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-bg-base dark:bg-bg-elevated font-bold text-text-primary outline-none focus:border-accent transition-all"
                       required
                     />
                   </div>
@@ -134,7 +134,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({
                       type="date"
                       value={formData.date}
                       onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-white font-bold text-ink outline-none focus:border-[#92400e] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-bg-base dark:bg-bg-elevated font-bold text-text-primary outline-none focus:border-accent transition-all"
                       required
                     />
                   </div>
@@ -146,7 +146,7 @@ export const HolidayModal: React.FC<HolidayModalProps> = ({
                     <select
                       value={formData.subjectId}
                       onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-white font-bold text-ink outline-none focus:border-[#92400e] transition-all appearance-none"
+                      className="w-full px-6 py-4 rounded-2xl border-2 border-border-strong bg-bg-base dark:bg-bg-elevated font-bold text-text-primary outline-none focus:border-accent transition-all appearance-none"
                       required
                     >
                       <option value="">Choose a subject...</option>
