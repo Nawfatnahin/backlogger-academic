@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, CalendarCheck, LayoutList, Shield, Zap, Globe, GraduationCap } from "lucide-react";
+import { FileText, CalendarCheck, LayoutList, Shield, Globe, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useSubscription } from "@/components/SubscriptionProvider";
 
@@ -51,13 +51,7 @@ export default function Features() {
       color: "from-rose-500 to-rose-700",
       shadow: "shadow-rose-500/20",
     },
-    {
-      title: "Lightning Fast",
-      description: "Built with Next.js 14 for near instant page loads and a smooth, snappy user experience.",
-      icon: Zap,
-      color: "from-blue-500 to-blue-700",
-      shadow: "shadow-blue-500/20",
-    },
+
     {
       title: "Accessible Anywhere",
       description: "Access your dashboard from your phone, tablet, or laptop. Stay organized on the go.",

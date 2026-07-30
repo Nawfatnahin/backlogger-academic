@@ -66,7 +66,7 @@ export async function addSubject(data: {
   classDays: string[];
   semesterStartDate: string;
   totalWeeks: number;
-  pastRecords?: Array<{ classDate: string; absenceType: 'present' | 'unexcused' }>;
+  pastRecords?: Array<{ classDate: string; absenceType: 'present' | 'unexcused' | 'cancelled' }>;
 }) {
   try {
     await checkRateLimit();
